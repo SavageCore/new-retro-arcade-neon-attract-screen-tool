@@ -32,8 +32,6 @@ NVENC uses your [compatible](https://developer.nvidia.com/nvidia-video-codec-sdk
 
 QuickSync again has a larger file size compared to x264 but by using the integrated GPU on compatible Intel CPUs the load is lessened
 
-**Note** currently there are no stable builds of FFmpeg with NVENC and QuickSync support. You can grab yourself the [latest build](https://ffmpeg.zeranoe.com/builds/win64/static/ffmpeg-latest-win64-static.zip) and copy `ffmpeg.exe` from `bin` to `resources\app\node_modules\@ffmpeg-installer\win32-x64` if you wish to upgrade. The settings menu only displays encoders your system is capable of using.
-
 #### Hardware Accelerated Decoding
 
 May or may not speed up your rendering times - give it a try!
