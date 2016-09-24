@@ -1,5 +1,7 @@
 # New Retro Arcade: Neon Attract Screen Tool
 
+![Preview](http://i.imgur.com/OVdeDxt.png)
+
 ### Running from source
 
 `git clone https://github.com/SavageCore/new-retro-arcade-neon-attract-screen-tool.git`
