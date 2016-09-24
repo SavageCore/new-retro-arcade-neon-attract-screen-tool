@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html class="noselect">
+
+<head>
+    <meta charset="UTF-8">
+    <title>New Retro Arcade: Neon Attract Screen Tool by SavageCore</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="../style.css">
+</head>
+
+<body>
+    <div id="content">
+        <div id="grey_back">&nbsp;</div>
+        <div id="header">
+            <div id="headerText"><span>Attract Screen Tool</span></div>
+            <div id="headerMenu"><span class="glyphicon glyphicon-menu-hamburger menu_btn"></span></div>
+        </div>
+        <div id="headerDraggableArea"></div>
+        <div id="menu_smartphone" class="menu_mobile_app noselect">
+            <ul style="overflow-y:auto;">
+                <li id="menu_about"><span class="glyphicon glyphicon-info-sign"></span>&nbsp;About</li>
+                <li id="menu_main"><span class="glyphicon glyphicon-home"></span>&nbsp;Main</li>
+                <li id="menu_settings"><span class="glyphicon glyphicon-cog"></span>&nbsp;Settings</li>
+                <li id="menu_quit"><span class="glyphicon glyphicon-log-out"></span>&nbsp;Quit</li>
+            </ul>
+        </div>
+        <form id="config-form" method="post">
+            <div class="form-group">
+                <label class="control-label " for="renderScale">
+                   Render Scale
+                  </label>
+                <input type="text" class="form-control" id="config-renderScale" name="renderScale" placeholder="256:192" aria-describedby="errorBlock-renderScale" />
+                <span id="errorBlock-renderScale" class="help-block hidden"></span>
+            </div>
+            <div class="form-group">
+                <label class="control-label " for="select">
+                   Encoder
+                  </label>
+                <select class="select form-control" id="config-encoder" name="encoder"></select>
+            </div>
+            <div class="form-group ">
+                <label class="control-label ">
+                   Hardware Accelerated Decoding
+                  </label>
+                <div class=" ">
+                    <div class="checkbox">
+                        <input type="checkbox" name="hwaccel" value="true" id="config-hwaccel" class="cbx hidden" />
+                        <label for="config-hwaccel" class="lbl"></label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group ">
+                <label class="control-label ">
+                   Mute Notification Audio
+                  </label>
+                <div class=" ">
+                    <div class="checkbox">
+                        <input type="checkbox" name="muteAudio" value="true" id="config-muteAudio" class="cbx hidden" />
+                        <label for="config-muteAudio" class="lbl"></label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group ">
+                <label class="control-label ">
+                   Generate FFmpeg Report
+                  </label>
+                <div class=" ">
+                    <div class="checkbox">
+                        <input type="checkbox" name="generateReport" value="true" id="config-generateReport" class="cbx hidden" />
+                        <label for="config-generateReport" class="lbl"></label>
+                        <p class="help-block">Save FFmpeg log to file in installation directory</p>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group ">
+                <label class="control-label ">
+                   Enable Extra Cabinet Support
+                  </label>
+                <div class=" ">
+                    <div class="checkbox">
+                        <input type="checkbox" name="extraCabinets" value="true" id="config-extraCabinets" class="cbx hidden" />
+                        <label for="config-extraCabinets" class="lbl"></label>
+                        <p class="help-block">You may set 5 more videos for AimBot cabinets if you change <a href="http://steamcommunity.com/app/465780/discussions/0/343786195673222722/?ctp=3#c343786746013809985" target="_blank">AttractMovieLayout=(X=5.000000,Y=7.000000) in GameUserSettings.ini</a></p>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label " for="maxDuration">
+                   Max Duration (Seconds)
+                  </label>
+                <input type="text" class="form-control" id="config-maxDuration" name="maxDuration" placeholder="0" aria-describedby="errorBlock-maxDuration" />
+                <span id="errorBlock-maxDuration" class="help-block hidden">Total duration of video in seconds. 0 to disable</span>
+            </div>
+            <div class="form-group">
+                <p class="form-label" id="label-attractScreenPath">Attract Screen Video - Not Set</p>
+                <button type="button" id="config-attractScreenPath" name="attractScreenPath">Choose file...</button>
+                <p class="help-block">AttractScreens.mp4 usually found in SteamApps\common\New Retro Arcade Neon\NewRetroArcade\Content\Movies</p>
+            </div>
+        </form>
+        <div class="bottom-bar"></div>
+    </div>
+</body>
+<script>
+    require('./renderer.js')
+</script>
+
+</html>

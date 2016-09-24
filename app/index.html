@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html class="noselect">
+
+<head>
+    <meta charset="UTF-8">
+    <title>New Retro Arcade: Neon Attract Screen Tool by SavageCore</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="./style.css">
+</head>
+
+<body>
+    <div id="content">
+        <div id="grey_back">&nbsp;</div>
+        <div id="header">
+            <div id="headerText"><span>Attract Screen Tool</span></div>
+            <div id="headerMenu"><span class="glyphicon glyphicon-menu-hamburger menu_btn"></span></div>
+        </div>
+        <div id="headerDraggableArea"></div>
+        <div id="menu_smartphone" class="menu_mobile_app">
+            <ul style="overflow-y:auto;">
+                <li id="menu_about"><span class="glyphicon glyphicon-info-sign"></span>&nbsp;About</li>
+                <li id="menu_main"><span class="glyphicon glyphicon-home"></span>&nbsp;Main</li>
+                <li id="menu_settings"><span class="glyphicon glyphicon-cog"></span>&nbsp;Settings</li>
+                <li id="menu_quit"><span class="glyphicon glyphicon-log-out"></span>&nbsp;Quit</li>
+            </ul>
+        </div>
+        <div id="attract_screen" data-gridnum="1"><img id="attract_screen_img" />
+            <div id="screenStatus" class="hidden"></div>
+        </div>
+        <div id="navbar">
+            <div id="navbar_prev">
+                &laquo;
+            </div>
+            <div id="navbar_page">
+                <select></select>
+            </div>
+            <div id="navbar_next">
+                &raquo;
+            </div>
+        </div>
+        <div id="details" class="select">
+        </div>
+        <div class="bottom-bar">
+            <div id="defaultVideo"><span id="attract_screen_default" class="glyphicon glyphicon-star-empty" title="Set as default video"></div><div id="render"><span id="attract_screen_render" class="glyphicon glyphicon-play" title="Render Attract Video"></div><div id="trash"><span id="attract_screen_delete" class="glyphicon glyphicon-trash" title="Delete video"></span></div>
+        </div>
+    </div>
+</body>
+<script>
+    require('./renderer.js')
+</script>
+
+</html>
