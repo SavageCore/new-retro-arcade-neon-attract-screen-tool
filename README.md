@@ -14,7 +14,7 @@
 
 ### Building
 
-Take a look at [electron-package](https://github.com/electron-userland/electron-packager) if you wish to build it yourself
+Take a look at [electron-packager](https://github.com/electron-userland/electron-packager) if you wish to build it yourself
 
 ## Options
 
