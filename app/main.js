@@ -106,8 +106,9 @@ saveVideoFile = function(gridnum, filePath, totalItems, initialGrid, lastFile) {
         if (error) {
             mainWindow.webContents.send('notificationMsg', [{
                 type: 'error',
-                msg: `Could not read file: ${error}`,
-                open: 'https://github.com/SavageCore/new-retro-arcade-neon-attract-screen-tool/issues'
+                msg: `Could not read file: ${filePath}`,
+                open: 'https://github.com/SavageCore/new-retro-arcade-neon-attract-screen-tool/issues',
+                log: error
             }]);
             return
         }
@@ -126,8 +127,9 @@ saveVideoFile = function(gridnum, filePath, totalItems, initialGrid, lastFile) {
                 if (error) {
                     mainWindow.webContents.send('notificationMsg', [{
                         type: 'error',
-                        msg: `FFprobe error (getting video duration): ${error}`,
-                        open: 'https://github.com/SavageCore/new-retro-arcade-neon-attract-screen-tool/issues'
+                        msg: `FFprobe error (getting video duration)`,
+                        open: 'https://github.com/SavageCore/new-retro-arcade-neon-attract-screen-tool/issues',
+                        log: error
                     }]);
                     return
                 }
@@ -157,8 +159,9 @@ saveVideoFile = function(gridnum, filePath, totalItems, initialGrid, lastFile) {
                             if (error) {
                                 mainWindow.webContents.send('notificationMsg', [{
                                     type: 'error',
-                                    msg: `Could not create thumbnails directory: ${error}`,
-                                    open: 'https://github.com/SavageCore/new-retro-arcade-neon-attract-screen-tool/issues'
+                                    msg: `Could not create thumbnails directory`,
+                                    open: 'https://github.com/SavageCore/new-retro-arcade-neon-attract-screen-tool/issues',
+                                    log: error
                                 }]);
                                 return
                             }
@@ -178,8 +181,9 @@ saveVideoFile = function(gridnum, filePath, totalItems, initialGrid, lastFile) {
                         if (error) {
                             mainWindow.webContents.send('notificationMsg', [{
                                 type: 'error',
-                                msg: `FFmpeg error (generating thumbnail): ${error}`,
-                                open: 'https://github.com/SavageCore/new-retro-arcade-neon-attract-screen-tool/issues'
+                                msg: `FFmpeg error (generating thumbnail)`,
+                                open: 'https://github.com/SavageCore/new-retro-arcade-neon-attract-screen-tool/issues',
+                                log: error
                             }]);
                             return
                         }
@@ -214,8 +218,9 @@ exports.selectAttractScreenFile = function() {
                     if (error) {
                         mainWindow.webContents.send('notificationMsg', [{
                             type: 'error',
-                            msg: `Could not read file: ${error}`,
-                            open: 'https://github.com/SavageCore/new-retro-arcade-neon-attract-screen-tool/issues'
+                            msg: `Could not read file: ${response[0]}`,
+                            open: 'https://github.com/SavageCore/new-retro-arcade-neon-attract-screen-tool/issues',
+                            log: error
                         }]);
                         return
                     }
@@ -264,8 +269,9 @@ exports.deleteVideo = function(gridnum) {
                                 if (error) {
                                     mainWindow.webContents.send('notificationMsg', [{
                                         type: 'error',
-                                        msg: `Could not read/write file: ${error}`,
-                                        open: 'https://github.com/SavageCore/new-retro-arcade-neon-attract-screen-tool/issues'
+                                        msg: `Could not read/write file: ${filePath}`,
+                                        open: 'https://github.com/SavageCore/new-retro-arcade-neon-attract-screen-tool/issues',
+                                        log: error
                                     }]);
                                     return
                                 }
@@ -507,8 +513,9 @@ exports.defaultVideo = function(gridnum) {
                     if (error) {
                         mainWindow.webContents.send('notificationMsg', [{
                             type: 'error',
-                            msg: `FFprobe error (getting default video duration): ${error}`,
-                            open: 'https://github.com/SavageCore/new-retro-arcade-neon-attract-screen-tool/issues'
+                            msg: `FFprobe error (getting default video duration)`,
+                            open: 'https://github.com/SavageCore/new-retro-arcade-neon-attract-screen-tool/issues',
+                            log: error
                         }]);
                         return
                     }
@@ -638,8 +645,9 @@ function getDetails(gridnum) {
                     if (error) {
                         mainWindow.webContents.send('notificationMsg', [{
                             type: 'error',
-                            msg: `FFprobe error (get details): ${error}`,
-                            open: 'https://github.com/SavageCore/new-retro-arcade-neon-attract-screen-tool/issues'
+                            msg: `FFprobe error (get details)`,
+                            open: 'https://github.com/SavageCore/new-retro-arcade-neon-attract-screen-tool/issues',
+                            log: error
                         }]);
                         return
                     }
@@ -664,8 +672,9 @@ exports.playVideo = function(gridnum) {
                 if (error) {
                     mainWindow.webContents.send('notificationMsg', [{
                         type: 'error',
-                        msg: `FFprobe error (get video details for player): ${error}`,
-                        open: 'https://github.com/SavageCore/new-retro-arcade-neon-attract-screen-tool/issues'
+                        msg: `FFprobe error (get video details for player)`,
+                        open: 'https://github.com/SavageCore/new-retro-arcade-neon-attract-screen-tool/issues',
+                        log: error
                     }]);
                     return
                 }
@@ -701,8 +710,9 @@ function parseConfig(action, configFile, configData, callback) {
                 if (error) {
                     mainWindow.webContents.send('notificationMsg', [{
                         type: 'error',
-                        msg: `Could not read from config (${configFile}): ${error}`,
-                        open: 'https://github.com/SavageCore/new-retro-arcade-neon-attract-screen-tool/issues'
+                        msg: `Could not read from config (${configFile})`,
+                        open: 'https://github.com/SavageCore/new-retro-arcade-neon-attract-screen-tool/issues',
+                        log: error
                     }]);
                     throw error
                 }
@@ -716,8 +726,9 @@ function parseConfig(action, configFile, configData, callback) {
                 if (error) {
                     mainWindow.webContents.send('notificationMsg', [{
                         type: 'error',
-                        msg: `Could not write to config: ${error}`,
-                        open: 'https://github.com/SavageCore/new-retro-arcade-neon-attract-screen-tool/issues'
+                        msg: `Could not write to config (${configFile})`,
+                        open: 'https://github.com/SavageCore/new-retro-arcade-neon-attract-screen-tool/issues',
+                        log: error
                     }]);
                 }
                 callback(true)
@@ -827,13 +838,13 @@ function updateChecker() {
     var semver = require('semver');
     require('pkginfo')(module, 'version');
     var gh = new GitHub();
-    var repo = gh.getRepo('SavageCore', 'new-retrro-arcade-neon-attract-screen-tool');
     var repo = gh.getRepo('SavageCore', 'new-retro-arcade-neon-attract-screen-tool');
     repo.listReleases(function(error, releases) {
         if(error){
             mainWindow.webContents.send('notificationMsg', [{
                 type: 'error',
-                msg: `Update Check: ${error}`
+                msg: `Update Check: ${error.response.data.message} - please see log`,
+                log: error
             }]);
         }
         if (semver.gt(releases[0].tag_name, module.exports.version) === true) {

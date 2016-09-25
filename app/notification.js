@@ -3,6 +3,7 @@ const remote = electron.remote
 const mainProcess = remote.require('./main')
 window.$ = window.jQuery = require('jquery');
 ipcRenderer = require('electron').ipcRenderer;
+const moment = require('moment')
 
 ipcRenderer.on('notificationMsg', (event, data) => {
     oldContents = $('.bottom-bar').html()
@@ -23,6 +24,13 @@ ipcRenderer.on('notificationMsg', (event, data) => {
 
         if (data.sticky !== undefined) {
             window.clearTimeout(timeoutID)
+        }
+        if (data.log !== undefined) {
+            var LogWriter = require('log-writer')
+            var writer = new LogWriter('error-log-%s.log')
+            writer.writeln(`[${moment().format("MMM DD kk:mm:ss")}]`)
+            writer.write(data.log)
+            writer.end()
         }
 
         switch (data.type) {
