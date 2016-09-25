@@ -16,6 +16,7 @@ ipcRenderer.on('notificationMsg', (event, data) => {
             window.clearTimeout(timeoutID)
             $(".bottom-bar").on('click', (event) => {
                 ipcRenderer.send('open-external', data.open)
+                $(".bottom-bar").off('click')
                 returnBottomBarState(oldContents, data)
             });
         }
