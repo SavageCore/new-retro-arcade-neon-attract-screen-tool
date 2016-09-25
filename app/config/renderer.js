@@ -80,6 +80,9 @@ $(document).ready(function() {
             }
         } else if (event.target.type == 'checkbox') {
             mainProcess.updateSettings([event.target.name, event.target.checked])
+            if (event.target.name == 'extraCabinets') {
+                mainProcess.editConfigINI(event.target.checked)
+            }
         } else if (event.target.name == 'maxDuration') {
             if (event.target.value == '0') {
                 mainProcess.updateSettings([event.target.name, false])

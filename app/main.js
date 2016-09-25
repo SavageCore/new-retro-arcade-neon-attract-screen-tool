@@ -779,3 +779,44 @@ function getGamePath(callback) {
         }
     });
 }
+
+exports.editConfigINI = function(state) {
+    var ConfigIniParser = require("config-ini-parser").ConfigIniParser;
+    getGamePath(function(gamePath) {
+        var delimiter = "\r\n";
+        var sectionName = '/Script/ArcadeRift.ArcadeGameUserSettings'
+        parser = new ConfigIniParser(delimiter);
+        parser.parse(fs.readFileSync(`${gamePath}\\NewRetroArcade\\Saved\\Config\\WindowsNoEditor\\GameUserSettings.ini`, 'utf-8'));
+        if (parser.isHaveSection(sectionName)) {
+            // Set AttractMovie if missing
+            if (parser.isHaveOption(sectionName, 'AttractMovie') === false) {
+                parser.set(sectionName, 'AttractMovie', 'AttractScreens.mp4');
+            }
+            switch (state) {
+                case true:
+                    // Invalid ini file? Anyway select with strange option name and set 7 rows
+                    if (parser.isHaveOption(sectionName, 'AttractMovieLayout=(X=5.000000,Y') === true) {
+                        parser.removeOption(sectionName, 'AttractMovieLayout=(X=5.000000,Y')
+                        parser.set(sectionName, 'AttractMovieLayout', '(X=5.000000,Y=7.000000)')
+                    } else {
+                        parser.set(sectionName, 'AttractMovieLayout', '(X=5.000000,Y=7.000000)')
+                    }
+                    break;
+                case false:
+                    // Revert to defaults
+                    if (parser.isHaveOption(sectionName, 'AttractMovieLayout=(X=5.000000,Y') === true) {
+                        parser.removeOption(sectionName, 'AttractMovieLayout=(X=5.000000,Y')
+                        parser.set(sectionName, 'AttractMovieLayout', '(X=5.000000,Y=6.000000)')
+                    } else {
+                        parser.set(sectionName, 'AttractMovieLayout', '(X=5.000000,Y=6.000000)')
+                    }
+                    break
+                default:
+                    break
+            }
+            // Relace new line at start of file
+            config = parser.stringify(delimiter).replace(/^\r\n|\n/, '');
+            fs.writeFileSync(`${gamePath}\\NewRetroArcade\\Saved\\Config\\WindowsNoEditor\\GameUserSettings_modified.ini`, config);
+        }
+    });
+}
