@@ -828,7 +828,7 @@ exports.editConfigINI = function(state) {
             }
             // Relace new line at start of file
             config = parser.stringify(delimiter).replace(/^\r\n|\n/, '');
-            fs.writeFileSync(`${gamePath}\\NewRetroArcade\\Saved\\Config\\WindowsNoEditor\\GameUserSettings_modified.ini`, config);
+            fs.writeFileSync(`${gamePath}\\NewRetroArcade\\Saved\\Config\\WindowsNoEditor\\GameUserSettings.ini`, config);
         }
     });
 }
