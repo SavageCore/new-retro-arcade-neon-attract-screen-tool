@@ -39,6 +39,7 @@ app.on('ready', function() {
         ipcMain.on('open-external', (e, url) => {
             shell.openExternal(url)
         });
+        updateChecker()
     });
 })
 
@@ -819,4 +820,42 @@ exports.editConfigINI = function(state) {
             fs.writeFileSync(`${gamePath}\\NewRetroArcade\\Saved\\Config\\WindowsNoEditor\\GameUserSettings_modified.ini`, config);
         }
     });
+}
+
+function updateChecker() {
+    var GitHub = require('github-api');
+    var semver = require('semver');
+    require('pkginfo')(module, 'version');
+    var gh = new GitHub();
+    var repo = gh.getRepo('SavageCore', 'new-retrro-arcade-neon-attract-screen-tool');
+    repo.listReleases(function(error, releases) {
+        if(error){
+            mainWindow.webContents.send('notificationMsg', [{
+                type: 'error',
+                msg: `Update Check: ${error}`
+            }]);
+        }
+        if (semver.gt(releases[0].tag_name, module.exports.version) === true) {
+            // Newer release
+            mainWindow.webContents.send('notificationMsg', [{
+                type: 'success',
+                msg: `Update available! Click to download`,
+                open: releases[0].html_url
+            }]);
+        } else if (semver.diff(releases[0].tag_name, module.exports.version) === null) {
+            // Current
+            mainWindow.webContents.send('notificationMsg', [{
+                type: 'info',
+                msg: `You have the latest version`,
+                delay: 3000
+            }]);
+        } else {
+            // Unknown
+            mainWindow.webContents.send('notificationMsg', [{
+                type: 'error',
+                msg: `Unknown! Click to download latest`,
+                open: releases[0].html_url
+            }]);
+        }
+    })
 }

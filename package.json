@@ -30,8 +30,10 @@
     "@ffprobe-installer/ffprobe": "^1.0.3",
     "config-ini-parser": "^1.1.6",
     "electron-json-storage": "^2.0.0",
+    "github-api": "^2.3.0",
     "jquery": "^3.1.0",
     "pkginfo": "^0.4.0",
+    "semver": "^5.3.0",
     "winreg": "^1.2.2"
   }
 }
