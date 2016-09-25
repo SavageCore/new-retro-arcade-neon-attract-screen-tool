@@ -828,6 +828,7 @@ function updateChecker() {
     require('pkginfo')(module, 'version');
     var gh = new GitHub();
     var repo = gh.getRepo('SavageCore', 'new-retrro-arcade-neon-attract-screen-tool');
+    var repo = gh.getRepo('SavageCore', 'new-retro-arcade-neon-attract-screen-tool');
     repo.listReleases(function(error, releases) {
         if(error){
             mainWindow.webContents.send('notificationMsg', [{
