@@ -841,7 +841,7 @@ function updateChecker() {
     var gh = new GitHub();
     var repo = gh.getRepo('SavageCore', 'new-retro-arcade-neon-attract-screen-tool');
     repo.listReleases(function(error, releases) {
-        if(error){
+        if (error) {
             mainWindow.webContents.send('notificationMsg', [{
                 type: 'error',
                 msg: `Update Check: ${error.response.data.message} - please see log`,
