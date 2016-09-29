@@ -714,7 +714,6 @@ function parseConfig(action, configFile, configData, callback) {
                         open: 'https://github.com/SavageCore/new-retro-arcade-neon-attract-screen-tool/issues',
                         log: error
                     }]);
-                    throw error
                 }
                 if (callback && typeof(callback) === "function") {
                     callback(data)
