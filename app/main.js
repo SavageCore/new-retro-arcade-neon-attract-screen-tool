@@ -382,6 +382,40 @@ exports.renderVideo = function() {
                             fs.writeFileSync(`${app.getPath('temp')}\\${i}list.txt`, listFileLine)
                         }
                     }
+
+                    // Extract Audio
+                    getGamePath(function(gamePath) {
+                        audioFilePath = `${gamePath}\\NewRetroArcade\\Content\\Music`
+                        for (var i = 0; i < totalVideos; i++) { // jshint ignore:line
+                            if (videoFiles[i] !== undefined) {
+                                // Does video contain audio stream
+                                videoContainsAudio(videoFiles[i].path, i, function(data) {
+                                    if (data[0] === true) {
+                                        args = []
+                                        args.push('-i')
+                                        args.push(data[1])
+                                        argString = `-y -report -vn -q:a 0 -map a`.split(' ')
+                                        args = args.concat(argString)
+                                        args.push(`${audioFilePath}\\AttractMusic${data[2]}.mp3`)
+                                        // Extract Audio
+                                        const execFile = require('child_process').execFile;
+                                        output = execFile(ffmpeg.path, args, (error, stdout, stderr) => {
+                                            if (error) {
+                                                mainWindow.webContents.send('notificationMsg', [{
+                                                    type: 'error',
+                                                    msg: `Extract audio failed: ${data[1]}`,
+                                                    open: 'https://github.com/SavageCore/new-retro-arcade-neon-attract-screen-tool/issues',
+                                                    log: error
+                                                }]);
+                                                return
+                                            }
+                                        });
+                                    }
+                                });
+                            }
+                        }
+                    });
+
                     var filename = attractScreenPath.replace(/^.*[\\\/]/, '')
 
                     var executablePath = ffmpeg.path
@@ -871,4 +905,30 @@ function updateChecker() {
             }]);
         }
     })
+}
+
+function videoContainsAudio(videoPath, gridnum, callback) {
+    args = []
+    args.push('-i')
+    args.push(videoPath)
+    argString = `-show_streams -select_streams a -loglevel error -of json`.split(' ')
+    args = args.concat(argString)
+    const execFile = require('child_process').execFile;
+    output = execFile(ffprobe.path, args, (error, stdout, stderrb) => {
+        if (error) {
+            mainWindow.webContents.send('notificationMsg', [{
+                type: 'error',
+                msg: `FFprobe - unable to determin audio stream: ${videoPath}`,
+                open: 'https://github.com/SavageCore/new-retro-arcade-neon-attract-screen-tool/issues',
+                log: error
+            }]);
+            callback([false,videoPath,gridnum])
+        }
+        output = JSON.parse(stdout)
+        if (typeof output.streams[0] !== 'undefined' && output.streams[0].hasOwnProperty('index')) {
+            callback([true,videoPath,gridnum])
+        } else {
+            callback([false,videoPath,gridnum])
+        }
+    });
 }
