@@ -385,7 +385,7 @@ exports.renderVideo = function() {
 
                     // Extract Audio
                     getGamePath(function(gamePath) {
-                        audioFilePath = `${gamePath}\\NewRetroArcade\\Content\\Music`
+                        audioFilePath = `${gamePath}\\NewRetroArcade\\Content\\Roms`
                         for (var i = 0; i < totalVideos; i++) { // jshint ignore:line
                             if (videoFiles[i] !== undefined) {
                                 // Does video contain audio stream
