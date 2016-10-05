@@ -42,9 +42,21 @@ ipcRenderer.on('notificationMsg', (event, data) => {
                 $(".bottom-bar").on('click', (event) => {
                     $('.bottom-bar').removeClass(`bottom-bar-${data.type}`)
                     $('.bottom-bar').html(oldContents)
+                    $("#attract_screen_default").click(function(event) {
+                        // If video not assigned to grid return
+                        if ($("#attract_screen_img").attr("src").indexOf("media\\blank") >= 0) return
+                        if ($(this).attr("class").indexOf("highlight-color") >= 0) {
+                            mainProcess.unsetDefaultVideo($('#attract_screen').data('gridnum') - 1)
+                        } else {
+                            mainProcess.defaultVideo($('#attract_screen').data('gridnum') - 1)
+                        }
+                    });
                     $("#attract_screen_render").click(function(event) {
                         $('<div class="block-overlay"></div>').appendTo('body');
                         mainProcess.renderVideo()
+                    });
+                    $("#attract_screen_delete").click(function(event) {
+                        mainProcess.deleteVideo($('#attract_screen').data('gridnum') - 1)
                     });
                 });
                 break;
