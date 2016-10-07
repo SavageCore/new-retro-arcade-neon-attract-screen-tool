@@ -521,7 +521,7 @@ exports.renderVideo = function() {
                                 type: 'error',
                                 msg: 'Render failed - please enable reporting in settings then retry and create an issue with this report on <a href="https://github.com/SavageCore/new-retro-arcade-neon-attract-screen-tool/issues" target="_blank">Github</a>',
                                 open: 'https://github.com/SavageCore/new-retro-arcade-neon-attract-screen-tool/issues',
-                                log: error
+                                log: `Render error: exit code ${code}`
                             }]);
                         }
                     });
