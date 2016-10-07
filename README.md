@@ -46,7 +46,11 @@ Will instruct FFmpeg to save a report containing detailed information of the ren
 
 #### Enable Extra Cabinet support
 
-This setting renders 35 videos instead of 30 as it is possible to [modify](http://steamcommunity.com/app/465780/discussions/0/343786195673222722/?ctp=3#c343786746013809985) the GameUserSettings file and enable the use of Attract Screens on AimBot cabinets within game.
+This setting renders 35 videos instead of 30 and modifies GameUserSettings file for you to enable the use of Attract Screens on AimBot cabinets within game.
+
+#### Max Duration (Seconds)
+
+Set maximum video length in seconds. Video will still only be as long as longest video file.
 
 ## Usage
 
