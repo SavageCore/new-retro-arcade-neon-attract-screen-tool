@@ -29,7 +29,7 @@ ipcRenderer.on('notificationMsg', (event, data) => {
             var LogWriter = require('log-writer')
             var writer = new LogWriter('error-log-%s.log')
             writer.writeln(`[${moment().format("MMM DD kk:mm:ss")}]`)
-            writer.write(data.log)
+            writer.write(`${data.log}\n`)
             writer.end()
         }
 
