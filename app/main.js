@@ -10,6 +10,7 @@ const {
     ipcMain,
     shell
 } = require('electron');
+const path = require('path')
 
 let mainWindow
 
@@ -396,7 +397,7 @@ exports.renderVideo = function() {
                                         args.push(data[1])
                                         argString = `-y -report -vn -q:a 0 -map a`.split(' ')
                                         args = args.concat(argString)
-                                        args.push(`${audioFilePath}\\AttractMusic${data[2]}.mp3`)
+                                        args.push(`${audioFilePath}\\${path.parse(data[1]).name}.mp3`)
                                         // Extract Audio
                                         const execFile = require('child_process').execFile;
                                         output = execFile(ffmpeg.path, args, (error, stdout, stderr) => {
@@ -922,13 +923,13 @@ function videoContainsAudio(videoPath, gridnum, callback) {
                 open: 'https://github.com/SavageCore/new-retro-arcade-neon-attract-screen-tool/issues',
                 log: error
             }]);
-            callback([false,videoPath,gridnum])
+            callback([false,videoPath])
         }
         output = JSON.parse(stdout)
         if (typeof output.streams[0] !== 'undefined' && output.streams[0].hasOwnProperty('index')) {
-            callback([true,videoPath,gridnum])
+            callback([true,videoPath])
         } else {
-            callback([false,videoPath,gridnum])
+            callback([false,videoPath])
         }
     });
 }
