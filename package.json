@@ -1,6 +1,6 @@
 {
   "name": "new-retro-arcade-neon-attract-screen-tool",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "A tool to render New Retro Arcade: Neon attract screen video files using FFmpeg",
   "main": "./app/main.js",
   "scripts": {
