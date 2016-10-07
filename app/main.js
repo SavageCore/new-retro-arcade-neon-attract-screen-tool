@@ -395,7 +395,8 @@ exports.renderVideo = function() {
                                         args = []
                                         args.push('-i')
                                         args.push(data[1])
-                                        argString = `-y -report -vn -q:a 0 -map a`.split(' ')
+                                        if (generateReport === true) args.push('-report')
+                                        argString = `-y -vn -q:a 0 -map a`.split(' ')
                                         args = args.concat(argString)
                                         args.push(`${audioFilePath}\\${path.parse(data[1]).name}.mp3`)
                                         // Extract Audio
