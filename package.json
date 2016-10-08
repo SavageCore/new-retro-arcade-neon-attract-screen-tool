@@ -42,7 +42,10 @@
   },
   "xo": {
     "rules": {
-      "max-nested-callbacks": [1, 10],
+      "max-nested-callbacks": [
+        1,
+        10
+      ],
       "block-scoped-var": 0
     }
   }

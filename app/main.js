@@ -518,7 +518,7 @@ exports.renderVideo = function () {
 					});
 
 					ffmpegProcess.on('close', code => {
-// Cleanup xlist.txt
+						// Cleanup xlist.txt
 						for (var i = 0; i < totalVideos; i++) {
 							fs.unlinkSync(`${app.getPath('temp')}\\${i}list.txt`);
 						}
