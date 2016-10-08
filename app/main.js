@@ -13,6 +13,8 @@ shell
 
 let mainWindow;
 
+ /* global videoFiles: true */
+
 app.on('ready', function () {
 // Check for game installation path / first run
 // Need to set muteAudio default here so it can be correctly toggled by user in settings
@@ -81,17 +83,12 @@ exports.selectVideoFile = function (gridnum) {
 					response.splice(totalVideos, response.length - totalVideos);
 				}
 
-// Loop around all returned files
-				for (var i = 0; i < response.length; i++) {
+				// Loop around all returned files
+				var initialGrid = gridnum;
+				var initialNum = gridnum;
+				for (let i = 0; i < response.length; i++) {
 					mainWindow.webContents.executeJavaScript(`$('<div class="block-overlay"></div>').appendTo('body');`);
-// Run function
 					var lastFile = false;
-					var initialGrid;
-					var initialNum;
-					if (initialGrid === undefined) {
-						initialGrid = gridnum;
-						initialNum = initialGrid;
-					}
 					gridnum = initialNum++;
 					if (i === response.length - 1 || response.length === 1) {
 						lastFile = true;
