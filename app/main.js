@@ -76,7 +76,7 @@ exports.selectVideoFile = function (gridnum) {
 				} else {
 					totalVideos = 30;
 				}
-// If more than totalVideos returned spliced array
+				// If more than totalVideos returned spliced array
 				if (response.length > totalVideos) {
 					response.splice(totalVideos, response.length - totalVideos);
 				}
@@ -99,6 +99,7 @@ exports.selectVideoFile = function (gridnum) {
 					if (lastFile) {
 						mainWindow.webContents.executeJavaScript(`$(".block-overlay").remove();`);
 					}
+					// Run function
 					saveVideoFile(gridnum, response[i], initialGrid, lastFile);
 				}
 			});
@@ -107,7 +108,7 @@ exports.selectVideoFile = function (gridnum) {
 };
 
 function saveVideoFile(gridnum, filePath, initialGrid, lastFile) {
-// Check file read access
+	// Check file read access
 	fs.access(filePath, fs.constants.R_OK, function (error) {
 		if (error) {
 			mainWindow.webContents.send('notificationMsg', [{
@@ -119,13 +120,12 @@ function saveVideoFile(gridnum, filePath, initialGrid, lastFile) {
 			return;
 		}
 		parseConfig('get', 'videoFiles', false, function (data) {
-			var videoFiles;
 			if (Object.keys(data).length > 0) {
 				videoFiles = data;
 			} else {
 				videoFiles = {};
 			}
-// Get video duration
+			// Get video duration
 			var args = `-v error -select_streams v:0 -of json -show_entries stream=duration`;
 			args = args.split(' ');
 			args.push(filePath);
@@ -175,7 +175,7 @@ function saveVideoFile(gridnum, filePath, initialGrid, lastFile) {
 							}
 						});
 					}
-// Generate thumbnail at half way point
+					// Generate thumbnail at half way point
 					var execThumbnail = require('child_process');
 
 					execThumbnail = execThumbnail.execFile;
@@ -382,7 +382,7 @@ exports.renderVideo = function () {
 					}
 
 					for (var i = 0; i < totalVideos; i++) {
-// Generate xlist.txt
+						// Generate xlist.txt
 						var listFileLine = '';
 						var divison;
 						if (videoFiles[i] === undefined) {
