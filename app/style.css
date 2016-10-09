@@ -807,3 +807,13 @@ select
     color: #888;
     border: none;
 }
+.scrolling
+{
+    overflow: auto;
+
+    height: 724px;
+}
+#videoFiles li
+{
+    cursor: move;
+}
