@@ -42,6 +42,10 @@ $('#menu_main').click(function () {
 	mainProcess.switchPage('main');
 });
 
+$('#menu_reorder').click(function () {
+	mainProcess.switchPage('reorder');
+});
+
 $('#menu_settings').click(function () {
 	mainProcess.switchPage('settings');
 });

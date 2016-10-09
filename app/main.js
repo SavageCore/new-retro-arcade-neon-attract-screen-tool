@@ -182,7 +182,7 @@ function saveVideoFile(gridnum, filePath, initialGrid, lastFile) {
 					args.push(filePath);
 					var args2 = `-vframes 1 -q:v 2`;
 					args2 = args2.split(' ');
-					args2.push(`${thumbnailPath}\\${gridnum}.jpg`);
+					args2.push(`${thumbnailPath}\\${path.parse(filePath).name}.jpg`);
 					args = args.concat(args2);
 					execThumbnail(ffmpeg.path, args, error => {
 						if (error) {
@@ -261,6 +261,7 @@ mainWindow, {
 		parseConfig('get', 'videoFiles', false, function (data) {
 			if (data !== undefined) {
 				const videoFiles = data;
+				var thumbnailFilePath =	videoFiles[gridnum].path;
 				delete videoFiles[gridnum];
 				parseConfig('set', 'videoFiles', videoFiles, function () {
 					parseConfig('get', 'main', false, function (mainConfig) {
@@ -271,7 +272,7 @@ mainWindow, {
 						}
 						parseConfig('set', 'main', mainConfig, function () {
 							getDefaultVideo();
-							var filePath = `${app.getPath('userData')}\\thumbnails\\${gridnum}.jpg`;
+							var filePath = `${app.getPath('userData')}\\thumbnails\\${path.parse(thumbnailFilePath).name}.jpg`;
 							fs.access(filePath, fs.constants.R_OK | fs.constants.W_OK, function (error) {
 								if (error) {
 									mainWindow.webContents.send('notificationMsg', [{
@@ -618,6 +619,9 @@ exports.switchPage = function (page) {
 			getDetails(0);
 			getDefaultVideo();
 			break;
+		case 'reorder':
+			mainWindow.loadURL(`file://${__dirname}/reorder/index.html`);
+			break;
 		case 'settings':
 			mainWindow.loadURL(`file://${__dirname}/config/index.html`);
 			break;
@@ -688,10 +692,18 @@ function getDetails(gridnum) {
 			return;
 		}
 		var thumbnailPath = `${app.getPath('userData')}\\thumbnails`;
-		var fullPath = `${thumbnailPath}\\${gridnum}.jpg`;
+		var fullPath = `${thumbnailPath}\\${path.parse(data[gridnum].path).name}.jpg`;
 		var thumbnailImagePath = fullPath;
-		mainWindow.webContents.send('thumbnailImage', [thumbnailImagePath]);
-		mainWindow.webContents.send('screenStatus', false);
+
+		fs.access(thumbnailImagePath, fs.constants.R_OK, err => {
+			if (err) {
+				mainWindow.webContents.send('thumbnailImage', ['media\\blank.png']);
+				mainWindow.webContents.send('screenStatus', 'Thumbnail missing');
+			} else {
+				mainWindow.webContents.send('thumbnailImage', [thumbnailImagePath]);
+				mainWindow.webContents.send('screenStatus', false);
+			}
+		});
 
 		// If video file exists
 		var filePath = videoFiles[gridnum].path;
@@ -977,3 +989,9 @@ function videoContainsAudio(videoPath, gridnum, callback) {
 		}
 	});
 }
+
+exports.sortableList = function (callback) {
+	parseConfig('get', 'videoFiles', false, function (videoFiles) {
+		callback(videoFiles);
+	});
+};
