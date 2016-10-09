@@ -16,8 +16,8 @@ let mainWindow;
  /* global videoFiles: true */
 
 app.on('ready', function () {
-// Check for game installation path / first run
-// Need to set muteAudio default here so it can be correctly toggled by user in settings
+	// Check for game installation path / first run
+	// Need to set muteAudio default here so it can be correctly toggled by user in settings
 	parseConfig('get', 'main', false, function (mainConfig) {
 		mainWindow = new BrowserWindow({
 			width: 480,
@@ -145,7 +145,7 @@ function saveVideoFile(gridnum, filePath, initialGrid, lastFile) {
 				videoFiles[gridnum].duration = fileDuration;
 				videoFiles[gridnum].path = filePath;
 
-// Check if updating video of default grid and update mainConfig
+				// Check if updating video of default grid and update mainConfig
 				parseConfig('get', 'main', false, function (configData) {
 					if (configData !== undefined) {
 						if (configData.defaultVideoGridNum === gridnum) {
@@ -156,7 +156,7 @@ function saveVideoFile(gridnum, filePath, initialGrid, lastFile) {
 					}
 				});
 
-// Check thumbnail directory exists if not create
+				// Check thumbnail directory exists if not create
 				var thumbnailPath = `${app.getPath('userData')}\\thumbnails`;
 				fs.access(thumbnailPath, fs.F_OK, function (err) {
 					if (err) {
@@ -937,21 +937,21 @@ function updateChecker() {
 			}]);
 		}
 		if (semver.gt(releases[0].tag_name, module.exports.version) === true) {
-// Newer release
+			// Newer release
 			mainWindow.webContents.send('notificationMsg', [{
 				type: 'success',
 				msg: `Update available! Click to download`,
 				open: releases[0].html_url
 			}]);
 		} else if (semver.diff(releases[0].tag_name, module.exports.version) === null) {
-// Current
+			// Current
 			mainWindow.webContents.send('notificationMsg', [{
 				type: 'info',
 				msg: `You have the latest version`,
 				delay: 3000
 			}]);
 		} else {
-// Unknown
+			// Unknown
 			mainWindow.webContents.send('notificationMsg', [{
 				type: 'error',
 				msg: `Unknown! Click to download latest`,
