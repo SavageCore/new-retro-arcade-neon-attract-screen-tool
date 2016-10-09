@@ -42,7 +42,6 @@ app.on('ready', function () {
 			shell.openExternal(url);
 		});
 		updateChecker();
-		mainWindow.webContents.openDevTools();
 	});
 });
 
