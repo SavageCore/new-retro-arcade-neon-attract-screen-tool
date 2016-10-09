@@ -32,24 +32,23 @@ $(document).ready(function () {
 			isMenuOpen = false;
 		}
 	});
-});
+	$('#menu_about').click(function () {
+		mainProcess.switchPage('about');
+	});
 
-$('#menu_about').click(function () {
-	mainProcess.switchPage('about');
-});
+	$('#menu_main').click(function () {
+		mainProcess.switchPage('main');
+	});
 
-$('#menu_main').click(function () {
-	mainProcess.switchPage('main');
-});
+	$('#menu_reorder').click(function () {
+		mainProcess.switchPage('reorder');
+	});
 
-$('#menu_reorder').click(function () {
-	mainProcess.switchPage('reorder');
-});
+	$('#menu_settings').click(function () {
+		mainProcess.switchPage('settings');
+	});
 
-$('#menu_settings').click(function () {
-	mainProcess.switchPage('settings');
-});
-
-$('#menu_quit').click(function () {
-	mainProcess.quitApp();
+	$('#menu_quit').click(function () {
+		mainProcess.quitApp();
+	});
 });

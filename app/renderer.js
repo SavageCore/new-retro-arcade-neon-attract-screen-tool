@@ -6,7 +6,6 @@ window.$ = window.jQuery = require('jquery');
 const {
 	ipcRenderer
 } = require('electron');
-require('./menu');
 const notification = require('./notification');
 
 /* global $:true */
@@ -23,6 +22,13 @@ mainProcess.parseConfigRenderer('get', 'main', false, function (mainConfig) {
 });
 
 $(document).ready(function () {
+	mainProcess.menuItems(function (data) {
+		for (var i = 0; i < data.length; i++) {
+			$('#menu_smartphone ul').append(`<li id="menu_${data[i].id}"><span class="glyphicon glyphicon-${data[i].glyphicon}"></span>&nbsp;${data[i].name}</li>`);
+		}
+		require('./menu');
+	});
+
 	var selectHTML = '';
 	for (var i = 1; i < totalVideos + 1; i++) {
 		if (i === 1) {

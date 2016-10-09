@@ -42,6 +42,7 @@ app.on('ready', function () {
 			shell.openExternal(url);
 		});
 		updateChecker();
+		mainWindow.webContents.openDevTools();
 	});
 });
 
@@ -994,4 +995,15 @@ exports.sortableList = function (callback) {
 	parseConfig('get', 'videoFiles', false, function (videoFiles) {
 		callback(videoFiles);
 	});
+};
+
+exports.menuItems = function (callback) {
+	var menuArr = [
+		{id: 'about', glyphicon: 'info-sign', name: 'About'},
+		{id: 'main', glyphicon: 'home', name: 'Main'},
+		{id: 'reorder', glyphicon: 'sort-by-order', name: 'Reorder'},
+		{id: 'settings', glyphicon: 'cog', name: 'Settings'},
+		{id: 'quit', glyphicon: 'log-out', name: 'Quit'}
+	];
+	callback(menuArr);
 };

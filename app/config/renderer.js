@@ -6,7 +6,6 @@ ipcRenderer
 const remote = electron.remote;
 const mainProcess = remote.require('./main');
 window.$ = window.jQuery = require('jquery');
-require('../menu');
 require('../notification');
 
 /* global $:true */
@@ -14,6 +13,12 @@ require('../notification');
 /* global document:true */
 
 $(document).ready(function () {
+	mainProcess.menuItems(function (data) {
+		for (var i = 0; i < data.length; i++) {
+			$('#menu_smartphone ul').append(`<li id="menu_${data[i].id}"><span class="glyphicon glyphicon-${data[i].glyphicon}"></span>&nbsp;${data[i].name}</li>`);
+		}
+		require('../menu');
+	});
 	mainProcess.availableEncoders(function (availableEncoders) {
 		var encodersHTML = '';
 		var selected = '';
