@@ -785,9 +785,7 @@ function parseConfig(action, configFile, configData, callback) {
 						log: error
 					}]);
 				}
-				if (callback && typeof (callback) === 'function') {
-					callback(data);
-				}
+				callback(data);
 			});
 			break;
 		case 'set':
@@ -800,7 +798,9 @@ function parseConfig(action, configFile, configData, callback) {
 						log: error
 					}]);
 				}
-				callback(true);
+				if (callback && typeof (callback) === 'function') {
+					callback(true);
+				}
 			});
 			break;
 		default:
