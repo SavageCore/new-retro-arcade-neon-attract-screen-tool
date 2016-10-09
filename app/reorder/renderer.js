@@ -32,7 +32,7 @@ $(document).ready(function () {
 });
 
 var el = document.getElementById('videoFiles');
-var sortable = new Sortable(el, {
+Sortable.create(el, {
 	onEnd: function (evt) {
 		switchGridPosition(evt.oldIndex, evt.newIndex);
 	}
