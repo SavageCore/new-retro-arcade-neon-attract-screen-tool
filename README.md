@@ -32,6 +32,8 @@ NVENC uses your [compatible](https://developer.nvidia.com/nvidia-video-codec-sdk
 
 QuickSync again has a larger file size compared to x264 but by using the integrated GPU on compatible Intel CPUs the load is lessened
 
+**Note** QuickSync may not work, this is a known [issue](https://github.com/SavageCore/new-retro-arcade-neon-attract-screen-tool/issues/13)
+
 #### Hardware Accelerated Decoding
 
 May or may not speed up your rendering times - give it a try!
@@ -72,7 +74,11 @@ Now hit the play button to render
 
 Clicking within the video details pane will play the video. Space will play/pause and Escape will close the video
 
+## Reorder
 
+Within the menu is now the option to reorder your videos.
+
+![Reorder preview](http://i.imgur.com/uOlY5Mq.gif)
 
 ### License [MIT](LICENSE.md)
 [nranlink]: http://digitalcybercherries.com/new-retro-arcade-neon/
