@@ -105,6 +105,17 @@ exports.selectVideoFile = function (gridnum) {
 };
 
 function saveVideoFile(gridnum, filePath, initialGrid, lastFile) {
+	var sanitize = require('pretty-filename');
+
+	// Sanitize filePath
+	var dirPath = path.dirname(filePath);
+	var baseName = sanitize(path.basename(filePath));
+	// If different then rename the file
+	if (path.relative(filePath, `${dirPath}\\${baseName}`).length > 0) {
+		fs.renameSync(filePath, `${dirPath}\\${baseName}`);
+		filePath = `${dirPath}\\${baseName}`;
+	}
+
 	// Check file read access
 	fs.access(filePath, fs.constants.R_OK, function (error) {
 		if (error) {
