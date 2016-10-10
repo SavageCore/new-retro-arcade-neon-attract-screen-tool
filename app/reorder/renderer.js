@@ -58,6 +58,15 @@ function switchGridPosition(from, to) {
 		}, {});
 		// Save to config
 		mainProcess.parseConfigRenderer('set', 'videoFiles', videoFilesTmp, function () {
+			// Check if reordering default video and update mainConfig with new gridnum
+			mainProcess.parseConfigRenderer('get', 'main', false, function (configData) {
+				if (configData !== undefined) {
+					if (configData.defaultVideoGridNum === from) {
+						configData.defaultVideoGridNum = to;
+						mainProcess.parseConfigRenderer('set', 'main', configData);
+					}
+				}
+			});
 			// Re number the list
 			var i = 1;
 			$('#videoFiles li').each(function () {
