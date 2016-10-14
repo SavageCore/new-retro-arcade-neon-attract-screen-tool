@@ -1,8 +1,5 @@
 const fs = require('fs');
 const path = require('path');
-const storage = require('electron-json-storage');
-const ffmpeg = require('@ffmpeg-installer/ffmpeg');
-const ffprobe = require('@ffprobe-installer/ffprobe');
 const {
 app,
 BrowserWindow,
@@ -10,6 +7,9 @@ dialog,
 ipcMain,
 shell
 } = require('electron');
+const storage = require('electron-json-storage');
+const ffmpeg = require('@ffmpeg-installer/ffmpeg');
+const ffprobe = require('@ffprobe-installer/ffprobe');
 
 let mainWindow;
 
