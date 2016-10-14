@@ -74,7 +74,7 @@ Now hit the play button to render
 
 Clicking within the video details pane will play the video. Space will play/pause and Escape will close the video
 
-## Reorder
+#### Reorder
 
 Within the menu is now the option to reorder your videos.
 
