@@ -10,6 +10,10 @@ shell
 const storage = require('electron-json-storage');
 const ffmpeg = require('@ffmpeg-installer/ffmpeg');
 const ffprobe = require('@ffprobe-installer/ffprobe');
+const xmlObjects = require('xml-objects');
+const XMLWriter = require('xml-writer');
+const eol = require('eol');
+const xmlfmt = require('xmlfmt');
 
 let mainWindow;
 
@@ -1012,8 +1016,140 @@ exports.menuItems = function (callback) {
 		{id: 'about', glyphicon: 'info-sign', name: 'About'},
 		{id: 'main', glyphicon: 'home', name: 'Main'},
 		{id: 'reorder', glyphicon: 'sort-by-order', name: 'Reorder'},
+		{id: 'save', glyphicon: 'save', name: 'Save'},
 		{id: 'settings', glyphicon: 'cog', name: 'Settings'},
 		{id: 'quit', glyphicon: 'log-out', name: 'Quit'}
 	];
 	callback(menuArr);
+};
+
+function searchInObj(s, obj) {
+	var matches = [];
+	for (var key in obj) {
+		if ({}.hasOwnProperty.call(obj, key)) {
+			if (obj[key].path.indexOf(s) > -1) {
+				matches.push(key);
+				return matches;
+			}
+		}
+	}
+	return matches;
+}
+
+exports.updateXML = function () {
+	var xw = new XMLWriter();
+	xw.startDocument('1.0', 'utf-8');
+	xw.startElement('ArcadeMachines');
+	mainWindow.webContents.executeJavaScript('$(\'#grey_back\').click()');
+	parseConfig('get', 'videoFiles', false, function (videoFiles) {
+		getGamePath(function (arcadeMachines) {
+			var xmlPath = `${arcadeMachines}\\NewRetroArcade\\Content\\ArcadeMachines.xml`;
+			fs.createReadStream(xmlPath)
+			.pipe(xmlObjects({explicitRoot: false, explicitArray: false, mergeAttrs: true}))
+			.on('data', function (data) {
+				for (var key in data) {
+					if ({}.hasOwnProperty.call(data, key)) {
+						xw.startElement(key);
+						if (typeof data[key].Game !== 'undefined') {
+							xw.startElement('Game');
+							xw.text(data[key].Game);
+							xw.endElement();
+						}
+						if (typeof data[key].Core !== 'undefined') {
+							xw.startElement('Core');
+							xw.text(data[key].Core);
+							xw.endElement();
+						}
+						if (typeof data[key].GameVolume !== 'undefined') {
+							xw.startElement('GameVolume');
+							xw.text(data[key].GameVolume);
+							xw.endElement();
+						}
+						if (typeof data[key].Game !== 'undefined') {
+							var matches = searchInObj(`${path.parse(data[key].Game).name}.`, videoFiles);
+							if (matches.length > 0) {
+								xw.startElement('GameImage');
+								xw.text(`GridFrame${Number(matches[0]) + 1}`);
+								xw.endElement();
+							} else	if (typeof data[key].GameImage !== 'undefined') {
+								xw.startElement('GameImage');
+								xw.text(data[key].GameImage);
+								xw.endElement();
+							}
+							if (matches.length > 0) {
+								xw.startElement('GameMusic');
+								xw.text(`${path.parse(videoFiles[matches[0]].path).name}.mp3`);
+								xw.endElement();
+							} else	if (typeof data[key].GameMusic !== 'undefined') {
+								xw.startElement('GameMusic');
+								xw.text(data[key].GameMusic);
+								xw.endElement();
+							}
+						} else	if (typeof data[key].GameImage !== 'undefined') {
+							xw.startElement('GameImage');
+							xw.text(data[key].GameImage);
+							xw.endElement();
+						}
+						if (typeof data[key].GameMusicVolume !== 'undefined') {
+							xw.startElement('GameMusicVolume');
+							xw.text(data[key].GameMusicVolume);
+							xw.endElement();
+						}
+						if (typeof data[key].ScreenType !== 'undefined') {
+							xw.startElement('ScreenType');
+							xw.text(data[key].ScreenType);
+							xw.endElement();
+						}
+						if (typeof data[key].ButtonLayout !== 'undefined') {
+							xw.startElement('ButtonLayout');
+							xw.text(data[key].ButtonLayout);
+							xw.endElement();
+						}
+						if (typeof data[key].ButtonColour !== 'undefined') {
+							xw.startElement('ButtonColour');
+							xw.writeAttribute('AB', data[key].ButtonColour.AB);
+							xw.writeAttribute('XY', data[key].ButtonColour.XY);
+							xw.writeAttribute('SS', data[key].ButtonColour.SS);
+							xw.endElement();
+						}
+						if (typeof data[key].ArtFrontPanel !== 'undefined') {
+							xw.startElement('ArtFrontPanel');
+							if (typeof data[key].ArtFrontPanel.Colour !== 'undefined') {
+								xw.writeAttribute('Colour', data[key].ArtFrontPanel.Colour);
+							} else if (typeof data[key].ArtFrontPanel.Texture !== 'undefined') {
+								xw.writeAttribute('Texture', data[key].ArtFrontPanel.Texture);
+							}
+							xw.endElement();
+						}
+						if (typeof data[key].ArtSidePanel !== 'undefined') {
+							xw.startElement('ArtSidePanel');
+							if (typeof data[key].ArtSidePanel.Colour !== 'undefined') {
+								xw.writeAttribute('Colour', data[key].ArtSidePanel.Colour);
+							} else if (typeof data[key].ArtSidePanel.Texture !== 'undefined') {
+								xw.writeAttribute('Texture', data[key].ArtSidePanel.Texture);
+							}
+							xw.endElement();
+						}
+					}
+					xw.endElement();
+				}
+				xw.endDocument();
+				fs.writeFile(`${arcadeMachines}\\NewRetroArcade\\Content\\ArcadeMachines.xml`, eol.crlf(xmlfmt(xw.toString())), {encoding: 'utf-8'}, function (error) {
+					if (error) {
+						mainWindow.webContents.send('notificationMsg', [{
+							type: 'error',
+							msg: `Could not write config`,
+							open: 'https://github.com/SavageCore/new-retro-arcade-neon-attract-screen-tool/issues',
+							log: error
+						}]);
+						return;
+					}
+					mainWindow.webContents.send('notificationMsg', [{
+						type: 'success',
+						msg: `Config saved!`
+					}]);
+				});
+			});
+		});
+	});
 };

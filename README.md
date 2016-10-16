@@ -80,6 +80,10 @@ Within the menu is now the option to reorder your videos.
 
 ![Reorder preview](http://i.imgur.com/uOlY5Mq.gif)
 
+#### Save
+
+Save from the main menu updates ArcadeMachines.xml for you. Setting GameImage and GameMusic for each video file that was matched against \<Game> so make sure your video files have the exact name of rom.
+
 ### License [MIT](LICENSE.md)
 [nranlink]: http://digitalcybercherries.com/new-retro-arcade-neon/
 [ffmpeglink]: http://ffmpeg.org

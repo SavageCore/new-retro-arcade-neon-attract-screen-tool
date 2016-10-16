@@ -44,6 +44,10 @@ $(document).ready(function () {
 		mainProcess.switchPage('reorder');
 	});
 
+	$('#menu_save').click(function () {
+		mainProcess.updateXML();
+	});
+
 	$('#menu_settings').click(function () {
 		mainProcess.switchPage('settings');
 	});
