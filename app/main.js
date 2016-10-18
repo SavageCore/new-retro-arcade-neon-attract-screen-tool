@@ -415,38 +415,40 @@ exports.renderVideo = function () {
 
 					// Extract Audio
 					getGamePath(function (gamePath) {
-						var audioFilePath = `${gamePath}\\NewRetroArcade\\Content\\Roms`;
-						for (let i = 0; i < totalVideos; i++) {
-							if (videoFiles[i] !== undefined) {
+						if (gamePath !== false) {
+							var audioFilePath = `${gamePath}\\NewRetroArcade\\Content\\Roms`;
+							for (let i = 0; i < totalVideos; i++) {
+								if (videoFiles[i] !== undefined) {
 								// Does video contain audio stream
-								videoContainsAudio(videoFiles[i].path, i, function (data) { // eslint-disable-line no-loop-func
-									if (data[0] === true) {
-										var args = [];
-										args.push('-i');
-										args.push(data[1]);
-										if (generateReport === true) {
-											args.push('-report');
-										}
-										var argString = `-y -vn -q:a 0 -map a`.split(' ');
-										args = args.concat(argString);
-										args.push(`${audioFilePath}\\${path.parse(data[1]).name}.mp3`);
-										// Extract Audio
-										var execFile = require('child_process');
-
-										execFile = execFile.execFile;
-										execFile(ffmpeg.path, args, error => {
-											if (error) {
-												mainWindow.webContents.send('notificationMsg', [{
-													type: 'error',
-													msg: `Extract audio failed: ${data[1]}`,
-													open: 'https://github.com/SavageCore/new-retro-arcade-neon-attract-screen-tool/issues',
-													log: error
-												}]);
-												return;
+									videoContainsAudio(videoFiles[i].path, i, function (data) { // eslint-disable-line no-loop-func
+										if (data[0] === true) {
+											var args = [];
+											args.push('-i');
+											args.push(data[1]);
+											if (generateReport === true) {
+												args.push('-report');
 											}
-										});
-									}
-								});
+											var argString = `-y -vn -q:a 0 -map a`.split(' ');
+											args = args.concat(argString);
+											args.push(`${audioFilePath}\\${path.parse(data[1]).name}.mp3`);
+										// Extract Audio
+											var execFile = require('child_process');
+
+											execFile = execFile.execFile;
+											execFile(ffmpeg.path, args, error => {
+												if (error) {
+													mainWindow.webContents.send('notificationMsg', [{
+														type: 'error',
+														msg: `Extract audio failed: ${data[1]}`,
+														open: 'https://github.com/SavageCore/new-retro-arcade-neon-attract-screen-tool/issues',
+														log: error
+													}]);
+													return;
+												}
+											});
+										}
+									});
+								}
 							}
 						}
 					});
@@ -902,38 +904,43 @@ exports.editConfigINI = function (state) {
 		var delimiter = '\r\n';
 		var sectionName = '/Script/ArcadeRift.ArcadeGameUserSettings';
 		var parser = new ConfigIniParser(delimiter);
-		parser.parse(fs.readFileSync(`${gamePath}\\NewRetroArcade\\Saved\\Config\\WindowsNoEditor\\GameUserSettings.ini`, 'utf-8'));
-		if (parser.isHaveSection(sectionName)) {
+		fs.access(`${gamePath}\\NewRetroArcade\\Saved\\Config\\WindowsNoEditor\\GameUserSettings.ini`, fs.constants.R_OK | fs.constants.W_OK, err => {
+			if (err) {
+				return;
+			}
+			parser.parse(fs.readFileSync(`${gamePath}\\NewRetroArcade\\Saved\\Config\\WindowsNoEditor\\GameUserSettings.ini`, 'utf-8'));
+			if (parser.isHaveSection(sectionName)) {
 			// Set AttractMovie if missing
-			if (parser.isHaveOption(sectionName, 'AttractMovie') === false) {
-				parser.set(sectionName, 'AttractMovie', 'AttractScreens.mp4');
-			}
-			switch (state) {
-				case true:
+				if (parser.isHaveOption(sectionName, 'AttractMovie') === false) {
+					parser.set(sectionName, 'AttractMovie', 'AttractScreens.mp4');
+				}
+				switch (state) {
+					case true:
 					// Invalid ini file? Anyway select with strange option name and set 7 rows
-					if (parser.isHaveOption(sectionName, 'AttractMovieLayout=(X=5.000000,Y') === true) {
-						parser.removeOption(sectionName, 'AttractMovieLayout=(X=5.000000,Y');
-						parser.set(sectionName, 'AttractMovieLayout', '(X=5.000000,Y=7.000000)');
-					} else {
-						parser.set(sectionName, 'AttractMovieLayout', '(X=5.000000,Y=7.000000)');
-					}
-					break;
-				case false:
+						if (parser.isHaveOption(sectionName, 'AttractMovieLayout=(X=5.000000,Y') === true) {
+							parser.removeOption(sectionName, 'AttractMovieLayout=(X=5.000000,Y');
+							parser.set(sectionName, 'AttractMovieLayout', '(X=5.000000,Y=7.000000)');
+						} else {
+							parser.set(sectionName, 'AttractMovieLayout', '(X=5.000000,Y=7.000000)');
+						}
+						break;
+					case false:
 					// Revert to defaults
-					if (parser.isHaveOption(sectionName, 'AttractMovieLayout=(X=5.000000,Y') === true) {
-						parser.removeOption(sectionName, 'AttractMovieLayout=(X=5.000000,Y');
-						parser.set(sectionName, 'AttractMovieLayout', '(X=5.000000,Y=6.000000)');
-					} else {
-						parser.set(sectionName, 'AttractMovieLayout', '(X=5.000000,Y=6.000000)');
-					}
-					break;
-				default:
-					break;
-			}
+						if (parser.isHaveOption(sectionName, 'AttractMovieLayout=(X=5.000000,Y') === true) {
+							parser.removeOption(sectionName, 'AttractMovieLayout=(X=5.000000,Y');
+							parser.set(sectionName, 'AttractMovieLayout', '(X=5.000000,Y=6.000000)');
+						} else {
+							parser.set(sectionName, 'AttractMovieLayout', '(X=5.000000,Y=6.000000)');
+						}
+						break;
+					default:
+						break;
+				}
 			// Relace new line at start of file
-			var config = parser.stringify(delimiter).replace(/^\r\n|\n/, '');
-			fs.writeFileSync(`${gamePath}\\NewRetroArcade\\Saved\\Config\\WindowsNoEditor\\GameUserSettings.ini`, config);
-		}
+				var config = parser.stringify(delimiter).replace(/^\r\n|\n/, '');
+				fs.writeFileSync(`${gamePath}\\NewRetroArcade\\Saved\\Config\\WindowsNoEditor\\GameUserSettings.ini`, config);
+			}
+		});
 	});
 };
 
@@ -1041,10 +1048,19 @@ exports.updateXML = function () {
 	xw.startDocument('1.0', 'utf-8');
 	xw.startElement('ArcadeMachines');
 	mainWindow.webContents.executeJavaScript('$(\'#grey_back\').click()');
-	parseConfig('get', 'videoFiles', false, function (videoFiles) {
-		getGamePath(function (arcadeMachines) {
-			var xmlPath = `${arcadeMachines}\\NewRetroArcade\\Content\\ArcadeMachines.xml`;
-			fs.createReadStream(xmlPath)
+	getGamePath(function (arcadeMachines) {
+		fs.access(`${arcadeMachines}\\NewRetroArcade\\Content\\ArcadeMachines.xml`, fs.constants.R_OK | fs.constants.W_OK, err => {
+			if (err) {
+				mainWindow.webContents.send('notificationMsg', [{
+					type: 'warning',
+					msg: `Unable to read/write ArcadeMachines.xml`,
+					log: `Unable to read/write: ${arcadeMachines}\\NewRetroArcade\\Content\\ArcadeMachines.xml`
+				}]);
+				return;
+			}
+			parseConfig('get', 'videoFiles', false, function (videoFiles) {
+				var xmlPath = `${arcadeMachines}\\NewRetroArcade\\Content\\ArcadeMachines.xml`;
+				fs.createReadStream(xmlPath)
 			.pipe(xmlObjects({explicitRoot: false, explicitArray: false, mergeAttrs: true}))
 			.on('data', function (data) {
 				for (var key in data) {
@@ -1149,6 +1165,7 @@ exports.updateXML = function () {
 						msg: `Config saved!`
 					}]);
 				});
+			});
 			});
 		});
 	});
