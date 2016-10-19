@@ -1062,7 +1062,7 @@ exports.updateXML = function () {
 				var xmlPath = `${arcadeMachines}\\NewRetroArcade\\Content\\ArcadeMachines.xml`;
 				fs.createReadStream(xmlPath)
 			.pipe(xmlObjects({explicitRoot: false, explicitArray: false, mergeAttrs: true}))
-			.on('data', function (data) {
+			.on('data', function (data) { // eslint-disable-line complexity
 				for (var key in data) {
 					if ({}.hasOwnProperty.call(data, key)) {
 						xw.startElement(key);
