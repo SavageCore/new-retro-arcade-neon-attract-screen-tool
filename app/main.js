@@ -748,7 +748,7 @@ function getDetails(gridnum) {
 						return;
 					}
 					var output = JSON.parse(stdout);
-					mainWindow.webContents.send('gridDetails', [filename, output.streams[0].duration, output.streams[0].width, output.streams[0].height, filePath]);
+					mainWindow.webContents.send('gridDetails', [filename, output.streams[0].duration, output.streams[0].width, output.streams[0].height, filePath, videoFiles[gridnum].attractVolume]);
 				});
 			}
 		});
@@ -1101,12 +1101,24 @@ exports.updateXML = function () {
 								xw.text(data[key].GameMusic);
 								xw.endElement();
 							}
+							if (matches.length > 0 && typeof videoFiles[matches[0]].attractVolume !== 'undefined') {
+								var volume = videoFiles[matches[0]].attractVolume;
+								if (videoFiles[matches[0]].attractVolume === 0) {
+									volume = '0.0';
+								}
+								xw.startElement('GameMusicVolume');
+								xw.text(volume);
+								xw.endElement();
+							}	else	if (typeof data[key].GameMusicVolume !== 'undefined') {
+								xw.startElement('GameMusicVolume');
+								xw.text(data[key].GameMusicVolume);
+								xw.endElement();
+							}
 						} else	if (typeof data[key].GameImage !== 'undefined') {
 							xw.startElement('GameImage');
 							xw.text(data[key].GameImage);
 							xw.endElement();
-						}
-						if (typeof data[key].GameMusicVolume !== 'undefined') {
+						} else	if (typeof data[key].GameMusicVolume !== 'undefined') {
 							xw.startElement('GameMusicVolume');
 							xw.text(data[key].GameMusicVolume);
 							xw.endElement();
@@ -1168,5 +1180,12 @@ exports.updateXML = function () {
 			});
 			});
 		});
+	});
+};
+
+exports.attractVolume = function (gridnum, value) {
+	parseConfig('get', 'videoFiles', false, function (videoFiles) {
+		videoFiles[gridnum].attractVolume = Number(value);
+		parseConfig('set', 'videoFiles', videoFiles);
 	});
 };

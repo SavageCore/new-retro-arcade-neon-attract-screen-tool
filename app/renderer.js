@@ -93,6 +93,25 @@ $(document).ready(function () {
 				return;
 		}
 	});
+	var rangeSlider = function () {
+		var slider = $('.range-slider');
+		var range = $('.range-slider__range');
+		var	value = $('.range-slider__value');
+
+		slider.each(function () {
+			value.each(function () {
+				var value = $(this).prev().attr('value');
+				$(this).html(value);
+			});
+
+			range.on('input', function () {
+				$(this).next(value).html(this.value);
+				mainProcess.attractVolume($('#attract_screen').data('gridnum') - 1, this.value);
+			});
+		});
+	};
+
+	rangeSlider();
 });
 
 $('#details').click(function () {
@@ -136,6 +155,13 @@ ipcRenderer.on('gridDetails', (event, data) => {
 		$('#details').html(`<p>${data[1]}</p>`);
 	} else {
 		$('#details').html();
+	}
+	if (data[5] !== undefined && data[5] !== null) {
+		$('.range-slider__value').html(data[5]);
+		$('.range-slider__range').val(data[5]);
+	} else {
+		$('.range-slider__value').html('1');
+		$('.range-slider__range').val('1');
 	}
 });
 
