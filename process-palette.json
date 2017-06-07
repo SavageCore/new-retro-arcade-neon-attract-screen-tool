@@ -12,7 +12,7 @@
     {
       "namespace": "process-palette",
       "action": "electron build",
-      "command": "electron-packager {projectPath} \"Attract Screen Tool\" --platform=win32 --arch=x64 --app-version=1.0.9 --electron-version=1.6.9 --out={projectPath}/releases --overwrite --win32metadata.ProductName=\"Attract Screen Tool\" --win32metadata.FileDescription=\"Attract Screen Tool\" --app-copyright=\"Copyright (C) 2017 SavageCore\"",
+      "command": "electron-packager {projectPath} \"Attract Screen Tool\" --platform=win32 --arch=x64 --app-version=1.1.0 --electron-version=1.6.9 --out={projectPath}/releases --overwrite --win32metadata.ProductName=\"Attract Screen Tool\" --win32metadata.FileDescription=\"Attract Screen Tool\" --app-copyright=\"Copyright (C) 2017 SavageCore\"",
       "arguments": [],
       "cwd": null,
       "inputDialogs": [],
