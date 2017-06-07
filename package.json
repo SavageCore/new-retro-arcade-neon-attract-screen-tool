@@ -35,7 +35,7 @@
     "config-ini-parser": "^1.1.6",
     "electron-json-storage": "^2.0.0",
     "eol": "^0.4.0",
-    "github-api": "^2.3.0",
+    "ghreleases": "^1.0.5",
     "jquery": "^3.1.0",
     "log-writer": "0.0.9",
     "moment": "^2.15.1",

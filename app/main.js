@@ -945,27 +945,31 @@ exports.editConfigINI = function (state) {
 };
 
 function updateChecker() {
-	var GitHub = require('github-api');
-	var semver = require('semver');
-	require('pkginfo')(module, 'version'); // eslint-disable-line import/newline-after-import
-	var gh = new GitHub();
-	var repo = gh.getRepo('SavageCore', 'new-retro-arcade-neon-attract-screen-tool');
-	repo.listReleases(function (error, releases) {
-		if (error) {
+	const semver = require('semver');
+	const gh = require('ghreleases');
+
+	const auth = {
+		token: '7196951bf80cb70a1aefb28e77bd9bb7dd8ffb3f',
+		user: 'SavageCore'
+	};
+	gh.getLatest(auth, 'SavageCore', 'new-retro-arcade-neon-attract-screen-tool', function (err, release) {
+		if (err) {
 			mainWindow.webContents.send('notificationMsg', [{
 				type: 'error',
-				msg: `Update Check: ${error.response.data.message} - please see log`,
-				log: error
+				msg: `Update Check: Error - please see log`,
+				log: err.toString()
 			}]);
+			return false;
 		}
-		if (semver.gt(releases[0].tag_name, module.exports.version) === true) {
+
+		if (semver.gt(release.tag_name, app.getVersion()) === true) {
 			// Newer release
 			mainWindow.webContents.send('notificationMsg', [{
 				type: 'success',
 				msg: `Update available! Click to download`,
-				open: releases[0].html_url
+				open: release.html_url
 			}]);
-		} else if (semver.diff(releases[0].tag_name, module.exports.version) === null) {
+		} else if (semver.diff(release.tag_name, app.getVersion()) === null) {
 			// Current
 			mainWindow.webContents.send('notificationMsg', [{
 				type: 'info',
@@ -977,7 +981,7 @@ function updateChecker() {
 			mainWindow.webContents.send('notificationMsg', [{
 				type: 'error',
 				msg: `Unknown! Click to download latest`,
-				open: releases[0].html_url
+				open: release.html_url
 			}]);
 		}
 	});
