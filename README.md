@@ -14,7 +14,7 @@
 
 ### Building
 
-Take a look at [electron-packager](https://github.com/electron-userland/electron-packager) if you wish to build it yourself
+Take a look at [electron-packager](https://github.com/electron-userland/electron-packager) if you wish to build it yourself. I have included my Atom [process-palette](https://atom.io/packages/process-palette) configuration where you can determine the current build options.
 
 ## Options
 
