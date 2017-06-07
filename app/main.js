@@ -946,13 +946,15 @@ exports.editConfigINI = function (state) {
 
 function updateChecker() {
 	const semver = require('semver');
-	const gh = require('ghreleases');
+	const request = require('request');
 
-	const auth = {
-		token: '7196951bf80cb70a1aefb28e77bd9bb7dd8ffb3f',
-		user: 'SavageCore'
+	const options = {
+		url: 'https://api.github.com/repos/SavageCore/new-retro-arcade-neon-attract-screen-tool/releases/latest',
+		headers: {
+			'User-Agent': 'new-retro-arcade-neon-attract-screen-tool'
+		}
 	};
-	gh.getLatest(auth, 'SavageCore', 'new-retro-arcade-neon-attract-screen-tool', function (err, release) {
+	request(options, function (err, response, body) {
 		if (err) {
 			mainWindow.webContents.send('notificationMsg', [{
 				type: 'error',
@@ -961,7 +963,7 @@ function updateChecker() {
 			}]);
 			return false;
 		}
-
+		const release = JSON.parse(body);
 		if (semver.gt(release.tag_name, app.getVersion()) === true) {
 			// Newer release
 			mainWindow.webContents.send('notificationMsg', [{
