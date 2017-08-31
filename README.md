@@ -1,5 +1,7 @@
 # New Retro Arcade: Neon Attract Screen Tool
 
+[![Build Status](https://ci.savagecore.eu/job/Attract%20Screen%20Tool/badge/icon)](https://ci.savagecore.eu/job/Attract%20Screen%20Tool/)
+
 ![Preview](http://i.imgur.com/OVdeDxt.png)
 
 ### Running from source
@@ -15,6 +17,10 @@
 ### Building
 
 Take a look at [electron-packager](https://github.com/electron-userland/electron-packager) if you wish to build it yourself. I have included my Atom [process-palette](https://atom.io/packages/process-palette) configuration where you can determine the current build options.
+
+### Latest builds
+
+[Jenkis CI](https://ci.savagecore.eu/job/Attract%20Screen%20Tool/lastSuccessfulBuild/)
 
 ## Options
 
