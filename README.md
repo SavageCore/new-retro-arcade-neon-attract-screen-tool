@@ -20,7 +20,7 @@ Take a look at [electron-packager](https://github.com/electron-userland/electron
 
 ### Latest builds
 
-[Jenkis CI](https://ci.savagecore.eu/job/Attract%20Screen%20Tool/lastSuccessfulBuild/)
+[Jenkins CI](https://ci.savagecore.eu/job/Attract%20Screen%20Tool/lastSuccessfulBuild/)
 
 ## Options
 
