@@ -1,0 +1,30 @@
+platform:
+- x64
+environment:
+  nodejs_version: "6"
+  GITHUB_TOKEN:
+    secure: s6dpRhIuHcYX7faKVrQRJn8a70ViX8pFYkPy4JCxUJqXWO75uYKad/Akaps21zhH
+cache:
+- '%APPDATA%\npm-cache'
+- '%USERPROFILE%\.electron'
+
+install:
+- ps: Install-Product node $env:nodejs_version $env:platform
+- set PATH=%APPDATA%\npm;%PATH%
+- npm install
+- npm install electron-packager -g
+
+test_script:
+- node --version
+- npm --version
+- npm test
+
+build_script:
+- ps: .\ci\build.ps1
+
+after_build:
+- 7z a Attract-Screen-Tool-win32-x64-%APPVEYOR_REPO_COMMIT%.zip "%APPVEYOR_BUILD_FOLDER%\builds\Attract Screen Tool-win32-x64"
+
+artifacts:
+- path: Attract-Screen-Tool-win32-x64-%APPVEYOR_REPO_COMMIT%.zip
+  name: Attract-Screen-Tool
