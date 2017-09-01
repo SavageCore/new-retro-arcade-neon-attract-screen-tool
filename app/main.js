@@ -339,7 +339,7 @@ exports.renderVideo = function () {
 						encoder = 'h264_nvenc -pixel_format yuv444p -preset lossless';
 						break;
 					case 'h264_qsv':
-						encoder = 'h264_qsv -pixel_format qsv -preset:v medium';
+						encoder = 'h264_qsv -pixel_format qsv -b:v 6M -look_ahead 0';
 						break;
 					default:
 						encoder = 'libx264';
