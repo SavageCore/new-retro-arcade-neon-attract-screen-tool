@@ -1,6 +1,6 @@
 # New Retro Arcade: Neon Attract Screen Tool
 
-[![Build Status](https://ci.savagecore.eu/job/Attract%20Screen%20Tool/badge/icon)](https://ci.savagecore.eu/job/Attract%20Screen%20Tool/) [![Build status](https://ci.appveyor.com/api/projects/status/26kccuyt4nick5ua?svg=true)](https://ci.appveyor.com/project/SavageCore/new-retro-arcade-neon-attract-screen-tool) [![Build Status](https://travis-ci.org/SavageCore/new-retro-arcade-neon-attract-screen-tool.svg?branch=master)](https://travis-ci.org/SavageCore/new-retro-arcade-neon-attract-screen-tool)
+[![Build status](https://ci.appveyor.com/api/projects/status/26kccuyt4nick5ua?svg=true)](https://ci.appveyor.com/project/SavageCore/new-retro-arcade-neon-attract-screen-tool) [![Build Status](https://travis-ci.org/SavageCore/new-retro-arcade-neon-attract-screen-tool.svg?branch=master)](https://travis-ci.org/SavageCore/new-retro-arcade-neon-attract-screen-tool)
 
 
 ![Preview](http://i.imgur.com/OVdeDxt.png)
@@ -20,8 +20,6 @@
 Take a look at [electron-packager](https://github.com/electron-userland/electron-packager) if you wish to build it yourself. I have included my Atom [process-palette](https://atom.io/packages/process-palette) configuration where you can determine the current build options.
 
 ### Latest builds
-
-[Jenkins CI](https://ci.savagecore.eu/job/Attract%20Screen%20Tool/lastSuccessfulBuild/) (Linux)
 
 [Appveyor](https://ci.appveyor.com/project/SavageCore/new-retro-arcade-neon-attract-screen-tool/build/artifacts) (Windows)
 
