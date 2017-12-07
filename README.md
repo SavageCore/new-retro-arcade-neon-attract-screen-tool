@@ -95,3 +95,8 @@ Save from the main menu updates ArcadeMachines.xml for you. Setting GameImage an
 [nranlink]: http://digitalcybercherries.com/new-retro-arcade-neon/
 [ffmpeglink]: http://ffmpeg.org
 [issue]:https://github.com/SavageCore/new-retro-arcade-neon-attract-screen-tool/issues
+
+## Support on Beerpay
+Hey dude! Help me out for a couple of :beers:!
+
+[![Beerpay](https://beerpay.io/SavageCore/new-retro-arcade-neon-attract-screen-tool/badge.svg?style=beer-square)](https://beerpay.io/SavageCore/new-retro-arcade-neon-attract-screen-tool)  [![Beerpay](https://beerpay.io/SavageCore/new-retro-arcade-neon-attract-screen-tool/make-wish.svg?style=flat-square)](https://beerpay.io/SavageCore/new-retro-arcade-neon-attract-screen-tool?focus=wish)
