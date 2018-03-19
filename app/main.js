@@ -559,6 +559,16 @@ exports.renderVideo = function () {
 								delay: 6000
 							}]);
 						} else {
+							fs.access(attractScreenPath, fs.constants.W_OK, err => {
+								mainWindow.webContents.send('render', ['end']);
+								mainWindow.webContents.send('notificationMsg', [{
+									type: 'error',
+									msg: `Could not write to Attract Screen Path`,
+									delay: 6000,
+									log: err
+								}]);
+								return false;
+							});
 							mainWindow.webContents.send('render', ['end', true]);
 							mainWindow.webContents.send('notificationMsg', [{
 								type: 'error',
