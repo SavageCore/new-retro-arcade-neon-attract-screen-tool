@@ -1,6 +1,6 @@
 {
   "name": "new-retro-arcade-neon-attract-screen-tool",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "A tool to render New Retro Arcade: Neon attract screen video files using FFmpeg",
   "main": "./app/main.js",
   "scripts": {
@@ -24,7 +24,7 @@
   },
   "homepage": "https://github.com/SavageCore/new-retro-arcade-neon-attract-screen-tool#readme",
   "devDependencies": {
-    "electron": "^1.4.0",
+    "electron": "^1.8.0",
     "stylelint": "^7.6.0",
     "stylelint-config-standard": "^15.0.0",
     "xo": "^0.16.0"
