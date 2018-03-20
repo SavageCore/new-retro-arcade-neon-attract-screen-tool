@@ -1,6 +1,6 @@
 # New Retro Arcade: Neon Attract Screen Tool
 
-[![Build status](https://ci.appveyor.com/api/projects/status/26kccuyt4nick5ua?svg=true)](https://ci.appveyor.com/project/SavageCore/new-retro-arcade-neon-attract-screen-tool) [![Build Status](https://travis-ci.org/SavageCore/new-retro-arcade-neon-attract-screen-tool.svg?branch=master)](https://travis-ci.org/SavageCore/new-retro-arcade-neon-attract-screen-tool) ![Dependency Status](https://tidelift.com/badges/github/SavageCore/new-retro-arcade-neon-attract-screen-tool)
+[![Build status](https://ci.appveyor.com/api/projects/status/26kccuyt4nick5ua?svg=true)](https://ci.appveyor.com/project/SavageCore/new-retro-arcade-neon-attract-screen-tool) [![Build Status](https://travis-ci.org/SavageCore/new-retro-arcade-neon-attract-screen-tool.svg?branch=master)](https://travis-ci.org/SavageCore/new-retro-arcade-neon-attract-screen-tool) [![Dependency Status](https://tidelift.com/badges/github/SavageCore/new-retro-arcade-neon-attract-screen-tool)](https://tidelift.com/repo/github/SavageCore/new-retro-arcade-neon-attract-screen-tool)
 
 
 ![Preview](http://i.imgur.com/OVdeDxt.png)
