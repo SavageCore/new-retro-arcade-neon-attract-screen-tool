@@ -1,37 +1,39 @@
 const electron = require('electron');
 const {
-ipcRenderer
+	ipcRenderer
 } = require('electron');
 
 const remote = electron.remote;
 const mainProcess = remote.require('./main');
-window.$ = window.jQuery = require('jquery');
-require('../notification');
+window.$ = window.jQuery = require('jquery'); // eslint-disable-line no-multi-assign
+require('../notification'); // eslint-disable-line  import/no-unassigned-import
 
 /* global $:true */
 /* global window:true */
 /* global document:true */
 
-$(document).ready(function () {
-	mainProcess.menuItems(function (data) {
-		for (var i = 0; i < data.length; i++) {
+$(document).ready(() => {
+	mainProcess.menuItems(data => {
+		for (let i = 0; i < data.length; i++) {
 			$('#menu_smartphone ul').append(`<li id="menu_${data[i].id}"><span class="glyphicon glyphicon-${data[i].glyphicon}"></span>&nbsp;${data[i].name}</li>`);
 		}
-		require('../menu');
+		require('../menu'); // eslint-disable-line  import/no-unassigned-import
 	});
-	mainProcess.availableEncoders(function (availableEncoders) {
-		var encodersHTML = '';
-		var selected = '';
-		for (var i in availableEncoders) {
-			if (i === '0') {
-				selected = ' selected';
+	mainProcess.availableEncoders(availableEncoders => {
+		let encodersHTML = '';
+		let selected = '';
+		for (const i in availableEncoders) {
+			if ({}.hasOwnProperty.call(availableEncoders, i)) {
+				if (i === '0') {
+					selected = ' selected';
+				}
+				encodersHTML += `<option value="${availableEncoders[i].id}"${selected}>${availableEncoders[i].name}</option>`;
+				selected = '';
 			}
-			encodersHTML += `<option value="${availableEncoders[i].id}"${selected}>${availableEncoders[i].name}</option>`;
-			selected = '';
 		}
 		$('#config-encoder').html(encodersHTML);
 	});
-	mainProcess.parseConfigRenderer('get', 'main', false, function (configData) {
+	mainProcess.parseConfigRenderer('get', 'main', false, configData => {
 		if (configData.renderScale !== undefined) {
 			$('#config-renderScale').val(configData.renderScale);
 		}
@@ -59,25 +61,25 @@ $(document).ready(function () {
 		}
 
 		if (configData.attractScreenPath === undefined) {
-			var elem = $('.bottom-bar');
+			const elem = $('.bottom-bar');
 			elem.html('Set Attract Screen Path!');
 			elem.addClass('bottom-bar-error');
 		} else {
 			$('#label-attractScreenPath').html('Attract Screen Video - Set');
 		}
 	});
-	$('#config-attractScreenPath').off('click').on('click', function () {
+	$('#config-attractScreenPath').off('click').on('click', () => {
 		mainProcess.selectAttractScreenFile();
 	});
-	$('#config-form').change(function (event) {
+	$('#config-form').change(event => {
 		if (event.target.name === 'renderScale') {
-			var split = event.target.value.split(':');
+			const split = event.target.value.split(':');
 			// Calculate greatest common divisor
-			var gcd = function (a, b) {
+			const gcd = function (a, b) {
 				return (!b) ? a : gcd(b, a % b); // eslint-disable-line no-negated-condition
 			};
-			var videoGCD = gcd(split[0], split[1]);
-// Divide width and height by GCD to validate aspect ratio
+			const videoGCD = gcd(split[0], split[1]);
+			// Divide width and height by GCD to validate aspect ratio
 			if (split[0] / videoGCD === 4 && split[1] / videoGCD === 3) {
 				$(`#errorBlock-${event.target.name}`).addClass('hidden');
 				$(`#config-${event.target.name}`).parent().removeClass('has-error');
@@ -109,7 +111,7 @@ $(document).ready(function () {
 ipcRenderer.on('attractScreenSet', (event, data) => {
 	if (data === true) {
 		$('#label-attractScreenPath').html('Attract Screen Video - Set');
-		var elem = $('.bottom-bar');
+		const elem = $('.bottom-bar');
 		elem.html('');
 		elem.removeClass('bottom-bar-error');
 	}

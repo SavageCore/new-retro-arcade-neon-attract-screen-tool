@@ -1,16 +1,16 @@
 const {
-ipcRenderer
+	ipcRenderer
 } = require('electron');
-window.$ = window.jQuery = require('jquery');
+window.$ = window.jQuery = require('jquery'); // eslint-disable-line no-multi-assign
 
 /* global $:true */
 /* global window:true */
 /* global document:true */
 
-$(document).ready(function () {
+$(document).ready(() => {
 // Keyboard controls for video
-	var video = $('#videoPlayer')[0];
-	$(window).keydown(function (event) {
+	const video = $('#videoPlayer')[0];
+	$(window).keydown(event => {
 		switch (event.key) {
 			case ' ':
 				playPause(video);
@@ -20,11 +20,10 @@ $(document).ready(function () {
 				window.close();
 				break;
 			default:
-				return;
 		}
 	});
-// Top right close button
-	$('#videoOverlay').click(function () {
+	// Top right close button
+	$('#videoOverlay').click(() => {
 		window.close();
 	});
 });
@@ -32,10 +31,10 @@ $(document).ready(function () {
 ipcRenderer.on('playVideo', (event, data) => {
 	if (data !== undefined) {
 		$('#videoPlayer').attr('src', `file://${data[0]}`);
-		$('#videoPlayer').on('play', function () {
+		$('#videoPlayer').on('play', () => {
 			$('#videoOverlay').fadeTo(1600, 0);
 		});
-		$('#videoPlayer').on('ended', function () {
+		$('#videoPlayer').on('ended', () => {
 			window.close();
 		});
 	}

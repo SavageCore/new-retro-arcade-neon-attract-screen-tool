@@ -12,7 +12,7 @@
     {
       "namespace": "process-palette",
       "action": "electron build",
-      "command": "electron-packager {projectPath} \"Attract Screen Tool\" --platform=win32 --arch=x64 --app-version=1.1.2 --electron-version=1.8.4 --out={projectPath}/releases --overwrite --win32metadata.ProductName=\"Attract Screen Tool\" --win32metadata.FileDescription=\"Attract Screen Tool\" --app-copyright=\"Copyright (C) 2018 SavageCore\"",
+      "command": "electron-packager {projectPath} \"Attract Screen Tool\" --platform=win32 --arch=x64 --app-version=1.1.2 --electron-version=1.8.6 --out={projectPath}/releases --overwrite --win32metadata.ProductName=\"Attract Screen Tool\" --win32metadata.FileDescription=\"Attract Screen Tool\" --app-copyright=\"Copyright (C) 2018 SavageCore\"",
       "arguments": [],
       "cwd": null,
       "inputDialogs": [],
@@ -34,14 +34,20 @@
       "successOutput": "{stdout}",
       "errorOutput": "{stdout}\n{stderr}",
       "fatalOutput": "Failed to execute : {fullCommand}\n{stdout}\n{stderr}",
-      "startMessage": null,
+      "startMessage": "",
       "successMessage": "Executed : {fullCommand}",
       "errorMessage": "Executed : {fullCommand}\nReturned with code {exitStatus}\n{stderr}",
       "fatalMessage": "Failed to execute : {fullCommand}\n{stdout}\n{stderr}",
       "menus": [],
       "notifyOnStart": false,
       "notifyOnSuccess": true,
-      "notifyOnError": true
+      "notifyOnError": true,
+      "startScript": null,
+      "successScript": null,
+      "errorScript": null,
+      "scriptOnStart": false,
+      "scriptOnSuccess": false,
+      "scriptOnError": false
     }
   ]
 }

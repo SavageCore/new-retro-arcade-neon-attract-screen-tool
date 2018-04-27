@@ -6,10 +6,10 @@ const mainProcess = remote.require('./main');
 /* global $:true */
 /* global document:true */
 
-$(document).ready(function () {
-	var isMenuOpen = false;
+$(document).ready(() => {
+	let isMenuOpen = false;
 
-	$('.menu_btn').click(function () {
+	$('.menu_btn').click(() => {
 		if (isMenuOpen === false) {
 			$('#menu_smartphone').clearQueue().animate({
 				right: '0px'
@@ -19,7 +19,7 @@ $(document).ready(function () {
 			isMenuOpen = true;
 		}
 	});
-	$('#grey_back').click(function () {
+	$('#grey_back').click(() => {
 		if (isMenuOpen === true) {
 			$('#menu_smartphone').clearQueue().animate({
 				right: '-570px'
@@ -32,27 +32,27 @@ $(document).ready(function () {
 			isMenuOpen = false;
 		}
 	});
-	$('#menu_about').click(function () {
+	$('#menu_about').click(() => {
 		mainProcess.switchPage('about');
 	});
 
-	$('#menu_main').click(function () {
+	$('#menu_main').click(() => {
 		mainProcess.switchPage('main');
 	});
 
-	$('#menu_reorder').click(function () {
+	$('#menu_reorder').click(() => {
 		mainProcess.switchPage('reorder');
 	});
 
-	$('#menu_save').click(function () {
+	$('#menu_save').click(() => {
 		mainProcess.updateXML();
 	});
 
-	$('#menu_settings').click(function () {
+	$('#menu_settings').click(() => {
 		mainProcess.switchPage('settings');
 	});
 
-	$('#menu_quit').click(function () {
+	$('#menu_quit').click(() => {
 		mainProcess.quitApp();
 	});
 });

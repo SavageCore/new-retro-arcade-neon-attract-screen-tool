@@ -3,24 +3,24 @@ const electron = require('electron');
 
 const remote = electron.remote;
 const mainProcess = remote.require('./main');
-window.$ = window.jQuery = require('jquery');
-var Sortable = require('sortablejs');
+window.$ = window.jQuery = require('jquery'); // eslint-disable-line no-multi-assign
+const Sortable = require('sortablejs');
 require('pkginfo')(module, 'version');
 
 /* global $:true */
 /* global window:true */
 /* global document:true */
 
-$(document).ready(function () {
-	mainProcess.menuItems(function (data) {
-		for (var i = 0; i < data.length; i++) {
+$(document).ready(() => {
+	mainProcess.menuItems(data => {
+		for (let i = 0; i < data.length; i++) {
 			$('#menu_smartphone ul').append(`<li id="menu_${data[i].id}"><span class="glyphicon glyphicon-${data[i].glyphicon}"></span>&nbsp;${data[i].name}</li>`);
 		}
-		require('../menu');
+		require('../menu'); // eslint-disable-line  import/no-unassigned-import
 	});
-	mainProcess.sortableList(function (data) {
-		mainProcess.parseConfigRenderer('get', 'main', false, function (mainConfig) {
-			var length;
+	mainProcess.sortableList(data => {
+		mainProcess.parseConfigRenderer('get', 'main', false, mainConfig => {
+			let length;
 			if (mainConfig.extraCabinets === true) {
 				length = Object.keys(data).length;
 			} else {
@@ -36,30 +36,30 @@ $(document).ready(function () {
 	$('.bottom-bar').html(`Version: ${module.exports.version}`);
 });
 
-var el = document.getElementById('videoFiles');
+const el = document.getElementById('videoFiles');
 Sortable.create(el, {
-	onEnd: function (evt) {
+	onEnd(evt) {
 		switchGridPosition(evt.oldIndex, evt.newIndex);
 	}
 });
 
 function switchGridPosition(from, to) {
-	mainProcess.parseConfigRenderer('get', 'videoFiles', false, function (videoFiles) {
-		var videoFilesTmp = {};
-		var videoFilesArr = [];
+	mainProcess.parseConfigRenderer('get', 'videoFiles', false, videoFiles => {
+		let videoFilesTmp = {};
+		let videoFilesArr = [];
 		// Convert to array
 		videoFilesArr = Object.keys(videoFiles).map(key => videoFiles[key]);
 		// Move item in array
 		videoFilesArr = arrayMove(videoFilesArr, from, to);
 		// Convert back to Object
-		videoFilesTmp = videoFilesArr.reduce(function (o, v, i) {
+		videoFilesTmp = videoFilesArr.reduce((o, v, i) => {
 			o[i] = v;
 			return o;
 		}, {});
 		// Save to config
-		mainProcess.parseConfigRenderer('set', 'videoFiles', videoFilesTmp, function () {
+		mainProcess.parseConfigRenderer('set', 'videoFiles', videoFilesTmp, () => {
 			// Check if reordering default video and update mainConfig with new gridnum
-			mainProcess.parseConfigRenderer('get', 'main', false, function (configData) {
+			mainProcess.parseConfigRenderer('get', 'main', false, configData => {
 				if (configData !== undefined) {
 					if (configData.defaultVideoGridNum === from) {
 						configData.defaultVideoGridNum = to;
@@ -68,7 +68,7 @@ function switchGridPosition(from, to) {
 				}
 			});
 			// Re number the list
-			var i = 1;
+			let i = 1;
 			$('#videoFiles li').each(function () {
 				$(this)[0].firstChild.innerText = i++;
 			});
@@ -84,7 +84,7 @@ function arrayMove(array, oldIndex, newIndex) {
 		newIndex += array.length;
 	}
 	if (newIndex >= array.length) {
-		var k = newIndex - array.length;
+		let k = newIndex - array.length;
 		while ((k--) + 1) {
 			array.push(undefined);
 		}

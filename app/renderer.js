@@ -2,7 +2,7 @@ const electron = require('electron');
 
 const remote = electron.remote;
 const mainProcess = remote.require('./main');
-window.$ = window.jQuery = require('jquery');
+window.$ = window.jQuery = require('jquery'); // eslint-disable-line no-multi-assign
 const {
 	ipcRenderer
 } = require('electron');
@@ -13,7 +13,7 @@ const notification = require('./notification');
 /* global document:true */
 /* global totalVideos:true */
 
-mainProcess.parseConfigRenderer('get', 'main', false, function (mainConfig) {
+mainProcess.parseConfigRenderer('get', 'main', false, mainConfig => {
 	if (mainConfig.extraCabinets === true) {
 		totalVideos = 35;
 	} else {
@@ -21,16 +21,16 @@ mainProcess.parseConfigRenderer('get', 'main', false, function (mainConfig) {
 	}
 });
 
-$(document).ready(function () {
-	mainProcess.menuItems(function (data) {
-		for (var i = 0; i < data.length; i++) {
+$(document).ready(() => {
+	mainProcess.menuItems(data => {
+		for (let i = 0; i < data.length; i++) {
 			$('#menu_smartphone ul').append(`<li id="menu_${data[i].id}"><span class="glyphicon glyphicon-${data[i].glyphicon}"></span>&nbsp;${data[i].name}</li>`);
 		}
-		require('./menu');
+		require('./menu'); // eslint-disable-line  import/no-unassigned-import
 	});
 
-	var selectHTML = '';
-	for (var i = 1; i < totalVideos + 1; i++) {
+	let selectHTML = '';
+	for (let i = 1; i < totalVideos + 1; i++) {
 		if (i === 1) {
 			selectHTML += `<option selected>${i}</option>`;
 		} else {
@@ -44,7 +44,7 @@ $(document).ready(function () {
 	});
 
 	$('#attract_screen_default').click(function () {
-// If video not assigned to grid return
+		// If video not assigned to grid return
 		if ($('#attract_screen_img').attr('src').indexOf('media\\blank') >= 0) {
 			return;
 		}
@@ -55,12 +55,12 @@ $(document).ready(function () {
 		}
 	});
 
-	$('#attract_screen_render').click(function () {
+	$('#attract_screen_render').click(() => {
 		$('<div class="block-overlay"></div>').appendTo('body');
 		mainProcess.renderVideo();
 	});
 
-	$('#attract_screen_delete').click(function () {
+	$('#attract_screen_delete').click(() => {
 		mainProcess.deleteVideo($('#attract_screen').data('gridnum') - 1);
 	});
 	$('#navbar_page select').change(function () {
@@ -74,14 +74,14 @@ $(document).ready(function () {
 			}
 		});
 	});
-	$('#navbar_prev').click(function () {
+	$('#navbar_prev').click(() => {
 		navbarPrevPage();
 	});
-	$('#navbar_next').click(function () {
+	$('#navbar_next').click(() => {
 		navbarNextPage();
 	});
 
-	$(window).keydown(function (event) {
+	$(window).keydown(event => {
 		switch (event.key) {
 			case 'ArrowLeft':
 				navbarPrevPage();
@@ -90,17 +90,16 @@ $(document).ready(function () {
 				navbarNextPage();
 				break;
 			default:
-				return;
 		}
 	});
-	var rangeSlider = function () {
-		var slider = $('.range-slider');
-		var range = $('.range-slider__range');
-		var	value = $('.range-slider__value');
+	const rangeSlider = function () {
+		const slider = $('.range-slider');
+		const range = $('.range-slider__range');
+		const	value = $('.range-slider__value');
 
-		slider.each(function () {
+		slider.each(() => {
 			value.each(function () {
-				var value = $(this).prev().attr('value');
+				const value = $(this).prev().attr('value');
 				$(this).html(value);
 			});
 
@@ -114,7 +113,7 @@ $(document).ready(function () {
 	rangeSlider();
 });
 
-$('#details').click(function () {
+$('#details').click(() => {
 	mainProcess.playVideo($('#attract_screen').data('gridnum') - 1);
 });
 
@@ -145,7 +144,7 @@ ipcRenderer.on('screenStatus', (event, data) => {
 
 ipcRenderer.on('gridDetails', (event, data) => {
 	if (data[0] !== false) {
-		var htmlContent;
+		let htmlContent;
 		htmlContent = `<p>File ${data[4]}</p>`;
 		htmlContent += `<p>Length ${Math.floor(data[1])} seconds</p>`;
 		htmlContent += `<p>Width ${data[2]}</p>`;
@@ -196,8 +195,8 @@ ipcRenderer.on('render', (event, data) => {
 });
 
 function navbarPrevPage() {
-	var x = Number($('#attract_screen').data('gridnum'));
-	var prevGrid = --x;
+	let x = Number($('#attract_screen').data('gridnum'));
+	let prevGrid = --x;
 	if (prevGrid < 1) {
 		prevGrid = totalVideos;
 	}
@@ -213,8 +212,8 @@ function navbarPrevPage() {
 }
 
 function navbarNextPage() {
-	var x = Number($('#attract_screen').data('gridnum'));
-	var nextGrid = ++x;
+	let x = Number($('#attract_screen').data('gridnum'));
+	let nextGrid = ++x;
 	if (nextGrid > totalVideos) {
 		nextGrid = 1;
 	}
