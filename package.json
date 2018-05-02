@@ -67,6 +67,6 @@
       ],
       "block-scoped-var": 0
     },
-		"prettifier": true
+    "prettifier": true
   }
 }
