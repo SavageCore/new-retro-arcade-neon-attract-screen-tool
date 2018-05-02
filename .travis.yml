@@ -16,6 +16,7 @@ before_script:
   - if [[ "$TRAVIS_OS_NAME" = "linux" ]]; then sudo apt-get install rpm; fi
   - if [[ "$TRAVIS_OS_NAME" = "osx" ]]; then brew update && brew install p7zip; fi
   - chmod a+x ./ci/travis.sh
+  - greenkeeper-lockfile-update	
 
 install:
 - npm install
@@ -26,9 +27,11 @@ script:
 
 after_script:
  - ./ci/travis.sh
+ - greenkeeper-lockfile-upload
 
 before_install:
 - openssl aes-256-cbc -K $encrypted_977674b441f6_key -iv $encrypted_977674b441f6_iv -in deploy_rsa.enc -out /tmp/deploy_rsa -d
 - eval "$(ssh-agent -s)"
 - chmod 600 /tmp/deploy_rsa
 - ssh-add /tmp/deploy_rsa
+- npm install -g greenkeeper-lockfile@1
