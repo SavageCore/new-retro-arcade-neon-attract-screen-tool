@@ -24,10 +24,10 @@
   },
   "homepage": "https://github.com/SavageCore/new-retro-arcade-neon-attract-screen-tool#readme",
   "devDependencies": {
-    "electron": "^1.8.6",
+    "electron": "^2.0.0",
     "stylelint": "^9.2.0",
     "stylelint-config-standard": "^18.2.0",
-    "xo": "^0.20.3"
+    "xo": "^0.21.0"
   },
   "dependencies": {
     "@ffmpeg-installer/ffmpeg": "^1.0.13",
@@ -44,7 +44,7 @@
     "moment": "^2.22.1",
     "object-keys": "^1.0.11",
     "pkginfo": "^0.4.1",
-    "pretty-bytes": "^4.0.2",
+    "pretty-bytes": "^5.0.0",
     "pretty-filename": "^0.1.0",
     "progress-stream": "^2.0.0",
     "request": "^2.85.0",
