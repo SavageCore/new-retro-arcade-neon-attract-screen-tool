@@ -18,10 +18,12 @@ before_script:
   - chmod a+x ./ci/travis.sh
 
 install:
+- npm install -g npm
 - npm install
 - npm install electron-packager -g
 
 script:
+ - npm --version
  - npm run test
 
 after_script:
