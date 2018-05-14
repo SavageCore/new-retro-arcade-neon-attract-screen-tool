@@ -23,6 +23,10 @@ Take a look at [electron-packager](https://github.com/electron-userland/electron
 
 [Appveyor](https://ci.appveyor.com/project/SavageCore/new-retro-arcade-neon-attract-screen-tool/build/artifacts) (Windows)
 
+### Known issues
+
+Thumbnails are generated with gray artifacts [[#36](https://github.com/SavageCore/new-retro-arcade-neon-attract-screen-tool/issues/36#issuecomment-388883663)]
+
 ## Options
 
 #### Render scale
