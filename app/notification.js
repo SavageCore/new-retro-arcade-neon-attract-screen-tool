@@ -1,6 +1,6 @@
 const electron = require('electron');
 
-const remote = electron.remote;
+const {remote} = electron;
 const mainProcess = remote.require('./main');
 window.$ = window.jQuery = require('jquery'); // eslint-disable-line no-multi-assign
 const {
@@ -13,7 +13,7 @@ const moment = require('moment');
 
 ipcRenderer.on('notificationMsg', (event, data) => {
 	const oldContents = $('.bottom-bar').html();
-	data = data[0];
+	[data] = data;
 	const delay = data.delay || 3000;
 	if (data !== undefined) {
 		$('.bottom-bar').html(`<div class="">${data.msg}</div>`);

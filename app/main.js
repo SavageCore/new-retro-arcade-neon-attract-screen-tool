@@ -248,7 +248,7 @@ exports.selectAttractScreenFile = function () {
 					}
 					parseConfig('get', 'main', false, configData => {
 						if (configData !== undefined) {
-							configData.attractScreenPath = response[0];
+							[configData.attractScreenPath] = response;
 							parseConfig('set', 'main', configData, () => {
 								mainWindow.webContents.send('attractScreenSet', true);
 								mainWindow.webContents.send('notificationMsg', [{
@@ -313,23 +313,23 @@ exports.deleteVideo = function (gridnum) {
 exports.renderVideo = function () {
 	parseConfig('get', 'main', false, configData => {
 		if (configData !== undefined) {
-			let defaultVideo = configData.defaultVideo;
-			let defaultVideoDuration = configData.defaultVideoDuration;
-			const attractScreenPath = configData.attractScreenPath;
+			let {defaultVideo} = configData;
+			let {defaultVideoDuration} = configData;
+			const {attractScreenPath} = configData;
 			let renderScale;
 			let totalVideos;
 			if (configData.renderScale === undefined) {
 				renderScale = '256:192';
 			} else {
-				renderScale = configData.renderScale;
+				({renderScale} = configData);
 			}
 			if (configData.extraCabinets === true) {
 				totalVideos = 35;
 			} else {
 				totalVideos = 30;
 			}
-			const muteAudio = configData.muteAudio;
-			const generateReport = configData.generateReport;
+			const {muteAudio} = configData;
+			const {generateReport} = configData;
 			let encoder;
 			if (configData.encoder === undefined) {
 				encoder = 'libx264';
@@ -387,7 +387,7 @@ exports.renderVideo = function () {
 						return a[1] - b[1];
 					});
 					// Cannot sort descending so select last item in object
-					let totalTime = videoDurationsSorted[Object.keys(videoFiles).length - 1][1];
+					let totalTime = videoDurationsSorted[Object.keys(videoFiles).length - 1][1]; // eslint-disable-line prefer-destructuring
 
 					if ((configData.maxDuration !== undefined && configData.maxDuration !== false) && configData.maxDuration <= totalTime) {
 						totalTime = configData.maxDuration;
@@ -433,7 +433,7 @@ exports.renderVideo = function () {
 											// Extract Audio
 											let execFile = require('child_process');
 
-											execFile = execFile.execFile;
+											({execFile} = execFile);
 											execFile(ffmpeg.path, args, error => {
 												if (error) {
 													mainWindow.webContents.send('notificationMsg', [{
@@ -496,7 +496,7 @@ exports.renderVideo = function () {
 
 					let spawn = require('child_process');
 
-					spawn = spawn.spawn;
+					({spawn} = spawn);
 					const ffmpegProcess = spawn(ffmpeg.path, args);
 					app.on('window-all-closed', () => {
 						ffmpegProcess.kill();
@@ -659,7 +659,7 @@ exports.switchPage = function (page) {
 exports.updateSettings = function (settings) {
 	parseConfig('get', 'main', false, mainConfig => {
 		if (mainConfig !== undefined) {
-			mainConfig[settings[0]] = settings[1];
+			mainConfig[settings[0]] = settings[1]; // eslint-disable-line prefer-destructuring
 			parseConfig('set', 'main', mainConfig, () => {
 				if (settings[0] === 'attractScreenPath') {
 					mainWindow.webContents.send('attractScreenSet', true);
@@ -739,7 +739,7 @@ function getDetails(gridnum) {
 
 				let execFile = require('child_process');
 
-				execFile = execFile.execFile;
+				({execFile} = execFile);
 				let args = `-v error -select_streams v:0 -of json -show_entries format=filename:stream=duration,width,height,divx_packed,has_b_frames`;
 				args = args.split(' ');
 				// Path may contain spaces so push to end of array separately to avoid split
@@ -767,7 +767,7 @@ exports.playVideo = function (gridnum) {
 	parseConfig('get', 'videoFiles', false, data => {
 		let execFile = require('child_process');
 
-		execFile = execFile.execFile;
+		({execFile} = execFile);
 		let args = `-v error -select_streams v:0 -of json -show_entries stream=width,height`;
 		args = args.split(' ');
 		// Path may contain spaces so push to end of array separately to avoid split
@@ -906,7 +906,7 @@ function getGamePath(callback) {
 exports.editConfigINI = function (state) {
 	let ConfigIniParser = require('config-ini-parser');
 
-	ConfigIniParser = ConfigIniParser.ConfigIniParser;
+	({ConfigIniParser} = ConfigIniParser);
 	getGamePath(gamePath => {
 		const delimiter = '\r\n';
 		const sectionName = '/Script/ArcadeRift.ArcadeGameUserSettings';
@@ -1004,7 +1004,7 @@ function videoContainsAudio(videoPath, gridnum, callback) {
 	args = args.concat(argString);
 	let execFile = require('child_process');
 
-	execFile = execFile.execFile;
+	({execFile} = execFile);
 	let output = execFile(ffprobe.path, args, (error, stdout) => {
 		if (error) {
 			mainWindow.webContents.send('notificationMsg', [{

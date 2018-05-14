@@ -3,7 +3,7 @@ const {
 	ipcRenderer
 } = require('electron');
 
-const remote = electron.remote;
+const {remote} = electron;
 const mainProcess = remote.require('./main');
 window.$ = window.jQuery = require('jquery'); // eslint-disable-line no-multi-assign
 require('../notification'); // eslint-disable-line  import/no-unassigned-import
