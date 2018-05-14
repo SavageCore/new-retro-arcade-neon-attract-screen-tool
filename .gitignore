@@ -3,3 +3,4 @@ bin
 TODO
 ffmpeg*
 releases
+error-log-*.log
