@@ -27,7 +27,9 @@ $(document).ready(() => {
 				length = 30;
 			}
 			for (let i = 0; i < length; i++) {
-				$('#videoFiles').append(`<li class="list-group-item"><span class="badge">${i + 1}</span>${path.basename(data[i].path)}</li>`);
+				if (data[i]) {
+					$('#videoFiles').append(`<li class="list-group-item"><span class="badge">${i + 1}</span>${path.basename(data[i].path)}</li>`);
+				}
 			}
 		});
 	});
