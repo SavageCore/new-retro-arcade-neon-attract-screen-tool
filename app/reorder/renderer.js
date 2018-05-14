@@ -1,7 +1,7 @@
 const path = require('path');
 const electron = require('electron');
 
-const remote = electron.remote;
+const {remote} = electron;
 const mainProcess = remote.require('./main');
 window.$ = window.jQuery = require('jquery'); // eslint-disable-line no-multi-assign
 const Sortable = require('sortablejs');
@@ -22,7 +22,7 @@ $(document).ready(() => {
 		mainProcess.parseConfigRenderer('get', 'main', false, mainConfig => {
 			let length;
 			if (mainConfig.extraCabinets === true) {
-				length = Object.keys(data).length;
+				({length} = Object.keys(data));
 			} else {
 				length = 30;
 			}

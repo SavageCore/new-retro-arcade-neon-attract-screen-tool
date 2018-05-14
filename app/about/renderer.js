@@ -1,6 +1,6 @@
 const electron = require('electron');
 
-const remote = electron.remote;
+const {remote} = electron;
 const mainProcess = remote.require('./main');
 
 window.$ = window.jQuery = require('jquery'); // eslint-disable-line no-multi-assign
