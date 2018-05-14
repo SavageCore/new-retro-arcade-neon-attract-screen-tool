@@ -5,7 +5,7 @@
   "main": "./app/main.js",
   "scripts": {
     "start": "electron .",
-    "test": "xo"
+    "test": "xo && stylelint"
   },
   "repository": {
     "type": "git",
