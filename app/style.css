@@ -25,12 +25,28 @@
   color: #757575;
 }
 
-#attract_screen_default:hover,
-#attract_screen_delete:hover,
-#attract_screen_render:hover,
-#navbar_next:hover,
-#navbar_prev:hover {
-  color: #212121;
+#navbar_prev {
+  font-size: 20px;
+  display: flex;
+  margin: 0;
+  padding: 3px;
+  cursor: pointer;
+  color: #757575;
+  background-color: #bdbdbd;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+#navbar_next {
+  font-size: 20px;
+  display: flex;
+  margin: 0;
+  padding: 3px;
+  cursor: pointer;
+  color: #757575;
+  background-color: #bdbdbd;
+  align-items: center;
+  justify-content: flex-end;
 }
 
 #attract_screen_delete {
@@ -44,6 +60,14 @@
   font-size: 24px;
   cursor: pointer;
   color: #757575;
+}
+
+#attract_screen_default:hover,
+#attract_screen_delete:hover,
+#attract_screen_render:hover,
+#navbar_next:hover,
+#navbar_prev:hover {
+  color: #212121;
 }
 
 #config-form {
@@ -163,14 +187,48 @@
   color: #999;
 }
 
+#videoFiles li {
+  cursor: move;
+}
+
 #menu_smartphone ul li {
   line-height: 70px;
   height: 70px;
   padding-left: 20px;
 }
 
+a {
+  text-decoration: none;
+  color: #ff5722;
+}
+
+a:hover {
+  text-decoration: none;
+  color: #e64a19;
+}
+
+.bottom-bar-info a {
+  display: inline;
+  color: #ff5722;
+  border-bottom: 1px dashed #ff5722;
+}
+
+.bottom-bar-error a,
+.bottom-bar-success a {
+  display: inline;
+  color: #e0e0e0;
+  border-bottom: 1px dashed #e0e0e0;
+}
+
+.bottom-bar-error a:hover,
+.bottom-bar-info a:hover,
+.bottom-bar-success a:hover {
+  color: #fff;
+  border-bottom: 1px dashed #fff;
+}
+
 #menu_smartphone ul li a {
-  font-family: Roboto;
+  font-family: Roboto, sans-serif;
   font-weight: 400;
   text-decoration: none;
   color: #999;
@@ -187,30 +245,6 @@
   width: 100%;
   height: 45px;
   background-color: #727272;
-}
-
-#navbar_next {
-  font-size: 20px;
-  display: flex;
-  margin: 0;
-  padding: 3px;
-  cursor: pointer;
-  color: #757575;
-  background-color: #bdbdbd;
-  align-items: center;
-  justify-content: flex-end;
-}
-
-#navbar_prev {
-  font-size: 20px;
-  display: flex;
-  margin: 0;
-  padding: 3px;
-  cursor: pointer;
-  color: #757575;
-  background-color: #bdbdbd;
-  align-items: center;
-  justify-content: flex-start;
 }
 
 #navbar_page,
@@ -294,13 +328,6 @@
   justify-content: center;
 }
 
-.bottom-bar-error a,
-.bottom-bar-success a {
-  display: inline;
-  color: #e0e0e0;
-  border-bottom: 1px dashed #e0e0e0;
-}
-
 .bottom-bar-info {
   font-size: 14px;
   display: flex;
@@ -312,19 +339,6 @@
   background-color: #9e9e9e;
   align-items: center;
   justify-content: center;
-}
-
-.bottom-bar-info a {
-  display: inline;
-  color: #ff5722;
-  border-bottom: 1px dashed #ff5722;
-}
-
-.bottom-bar-error a:hover,
-.bottom-bar-info a:hover,
-.bottom-bar-success a:hover {
-  color: #fff;
-  border-bottom: 1px dashed #fff;
 }
 
 .bottom-bar-progress {
@@ -444,10 +458,6 @@
   background: #898989;
 }
 
-.lbl:active::after {
-  transform: scale(1.15, 0.85);
-}
-
 .lbl::after {
   position: absolute;
   top: -3px;
@@ -460,6 +470,10 @@
   border-radius: 100px;
   background: #fafafa;
   box-shadow: 0 3px 3px rgba(0, 0, 0, 0.05);
+}
+
+.lbl:active::after {
+  transform: scale(1.15, 0.85);
 }
 
 .medium {
@@ -539,7 +553,7 @@
 }
 
 .top {
-  font-family: Roboto;
+  font-family: Roboto, sans-serif;
   font-size: 20px;
   font-weight: 400;
   line-height: 70px;
@@ -555,16 +569,6 @@
 .hidden,
 ::-webkit-scrollbar {
   display: none;
-}
-
-a {
-  text-decoration: none;
-  color: #ff5722;
-}
-
-a:hover {
-  text-decoration: none;
-  color: #e64a19;
 }
 
 body,
@@ -593,10 +597,6 @@ select {
 .scrolling {
   overflow: auto;
   height: 724px;
-}
-
-#videoFiles li {
-  cursor: move;
 }
 
 #volume_bar {
@@ -635,15 +635,6 @@ select {
   border-radius: 50%;
   background: #757575;
   -webkit-appearance: none;
-  appearance: none;
-}
-
-.range-slider__range::-webkit-slider-thumb:hover {
-  background: #ff5722;
-}
-
-.range-slider__range:active::-webkit-slider-thumb {
-  background: #ff5722;
 }
 
 .range-slider__range::-moz-range-thumb {
@@ -657,11 +648,19 @@ select {
   background: #757575;
 }
 
-.range-slider__range::-moz-range-thumb:hover {
+.range-slider__range::-webkit-slider-thumb:hover {
+  background: #ff5722;
+}
+
+.range-slider__range:active::-webkit-slider-thumb {
   background: #ff5722;
 }
 
 .range-slider__range:active::-moz-range-thumb {
+  background: #ff5722;
+}
+
+.range-slider__range::-moz-range-thumb:hover {
   background: #ff5722;
 }
 
