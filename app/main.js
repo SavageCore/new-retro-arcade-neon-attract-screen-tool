@@ -415,7 +415,7 @@ exports.renderVideo = function () {
 					// Extract Audio
 					getGamePath(gamePath => {
 						if (gamePath !== false) {
-							const audioFilePath = `${gamePath}\\NewRetroArcade\\Content\\Roms`;
+							const audioFilePath = `${gamePath}\\NewRetroArcade\\Content\\Arcades`;
 							for (let i = 0; i < totalVideos; i++) {
 								if (videoFiles[i] !== undefined) {
 									// Does video contain audio stream
