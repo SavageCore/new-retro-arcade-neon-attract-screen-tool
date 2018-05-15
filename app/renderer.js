@@ -68,7 +68,10 @@ $(document).ready(async () => {
 	});
 	$('#navbar_page select').change(function () {
 		$('#attract_screen').data('gridnum', $(this).val());
-		mainProcess.changeGrid($('#attract_screen').data('gridnum') - 1);
+		mainProcess.changeGrid($('#attract_screen').data('gridnum') - 1)
+			.catch(err => {
+				console.error(err);
+			});
 		$('#navbar_page select option').each(function () {
 			if ($(this).val() === $('#attract_screen').data('gridnum')) {
 				$(this).prop('selected', true);
@@ -204,7 +207,10 @@ function navbarPrevPage() {
 		prevGrid = totalVideos;
 	}
 	$('#attract_screen').data('gridnum', prevGrid);
-	mainProcess.changeGrid(prevGrid - 1);
+	mainProcess.changeGrid(prevGrid - 1)
+		.catch(err => {
+			console.error(err);
+		});
 	$('#navbar_page select option').each(function () {
 		if (Number($(this).val()) === Number($('#attract_screen').data('gridnum'))) {
 			$(this).prop('selected', true);
@@ -221,7 +227,11 @@ function navbarNextPage() {
 		nextGrid = 1;
 	}
 	$('#attract_screen').data('gridnum', nextGrid);
-	mainProcess.changeGrid(nextGrid - 1);
+	mainProcess.changeGrid(nextGrid - 1)
+		.catch(err => {
+			console.error(err);
+			return false;
+		});
 	$('#navbar_page select option').each(function () {
 		if (Number($(this).val()) === Number($('#attract_screen').data('gridnum'))) {
 			$(this).prop('selected', true);

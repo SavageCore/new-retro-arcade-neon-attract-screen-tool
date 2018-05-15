@@ -15,8 +15,11 @@ const XMLWriter = require('xml-writer');
 const eol = require('eol');
 const xmlfmt = require('xmlfmt');
 const makeDir = require('make-dir');
+const unhandled = require('electron-unhandled');
 
 let mainWindow;
+
+unhandled();
 
 app.on('ready', async () => {
 	// Check for game installation path / first run
@@ -37,9 +40,9 @@ app.on('ready', async () => {
 	} else {
 		createWindow(mainWindow, `file://${__dirname}/index.html`);
 	}
-	mainWindow.webContents.on('did-finish-load', () => {
-		getDetails(0);
-		getDefaultVideo();
+	mainWindow.webContents.on('did-finish-load', async () => {
+		await getDetails(0);
+		await getDefaultVideo();
 	});
 	mainWindow.once('ready-to-show', () => {
 		mainWindow.show();
@@ -219,7 +222,7 @@ function saveVideoFile(gridNum, filePath, initialGrid, lastFile) {
 							console.error(err);
 						});
 					if (lastFile) {
-						getDetails(initialGrid);
+						await getDetails(initialGrid);
 					}
 				});
 			});
@@ -309,9 +312,9 @@ exports.deleteVideo = async function (gridNum) {
 				.catch(err => {
 					console.error(err);
 				});
-			getDefaultVideo();
+			await getDefaultVideo();
 			const filePath = `${app.getPath('userData')}\\thumbnails\\${path.parse(thumbnailFilePath).name}.jpg`;
-			fs.access(filePath, fs.constants.R_OK | fs.constants.W_OK, error => {
+			fs.access(filePath, fs.constants.R_OK | fs.constants.W_OK, async error => {
 				if (error) {
 					mainWindow.webContents.send('notificationMsg', [{
 						type: 'error',
@@ -323,7 +326,7 @@ exports.deleteVideo = async function (gridNum) {
 				}
 				fs.unlink(filePath);
 				mainWindow.webContents.send('thumbnailImage', ['media\\blank.png']);
-				getDetails(gridNum);
+				await getDetails(gridNum);
 			});
 		}
 	}
@@ -642,7 +645,7 @@ exports.defaultVideo = async function (gridNum) {
 			.catch(err => {
 				console.error(err);
 			});
-		getDefaultVideo();
+		await getDefaultVideo();
 	});
 };
 
@@ -660,18 +663,18 @@ exports.unsetDefaultVideo = async function (gridNum) {
 		.catch(err => {
 			console.error(err);
 		});
-	getDefaultVideo();
+	await getDefaultVideo();
 };
 
-exports.switchPage = function (page) {
+exports.switchPage = async function (page) {
 	switch (page) {
 		case 'about':
 			mainWindow.loadURL(`file://${__dirname}/about/index.html`);
 			break;
 		case 'main':
 			mainWindow.loadURL(`file://${__dirname}/index.html`);
-			getDetails(0);
-			getDefaultVideo();
+			await getDetails(0);
+			await getDefaultVideo();
 			break;
 		case 'reorder':
 			mainWindow.loadURL(`file://${__dirname}/reorder/index.html`);
@@ -681,8 +684,8 @@ exports.switchPage = function (page) {
 			break;
 		default:
 			mainWindow.loadURL(`file://${__dirname}/index.html`);
-			getDetails(0);
-			getDefaultVideo();
+			await getDetails(0);
+			await getDefaultVideo();
 			break;
 	}
 };
@@ -718,83 +721,103 @@ exports.quitApp = function () {
 };
 
 exports.changeGrid = function (gridNum) {
-	getDetails(gridNum);
-	getDefaultVideo();
+	return new Promise(async (resolve, reject) => {
+		await getDetails(gridNum)
+			.catch(err => {
+				reject(new Error(err));
+			});
+		await getDefaultVideo()
+			.catch(err => {
+				reject(new Error(err));
+			});
+		resolve(true);
+	});
 };
 
-async function getDefaultVideo() {
-	const mainConfig = await parseConfig('get', 'main', false)
-		.catch(err => {
-			console.error(err);
-		});
-	if (mainConfig !== undefined) {
-		mainWindow.webContents.send('defaultVideo', mainConfig.defaultVideoGridNum);
-	}
+function getDefaultVideo() {
+	return new Promise(async (resolve, reject) => {
+		const mainConfig = await parseConfig('get', 'main', false)
+			.catch(err => {
+				reject(new Error(err));
+			});
+		if (mainConfig !== undefined) {
+			mainWindow.webContents.send('defaultVideo', mainConfig.defaultVideoGridNum);
+			resolve(true);
+		}
+		reject(new Error('Unable to find default video grid number'));
+	});
 }
 
-async function getDetails(gridNum) {
-	let videoFiles = await parseConfig('get', 'videoFiles', false)
-		.catch(err => {
-			console.error(err);
-		});
-	if (!videoFiles) {
-		videoFiles = {};
-	}
-	if (Object.keys(videoFiles).length === 0) {
-		mainWindow.webContents.send('thumbnailImage', ['media\\blank.png']);
-		mainWindow.webContents.send('gridDetails', [false, '']);
-		mainWindow.webContents.send('screenStatus', 'Video not set');
-		return;
-	}
-	if (videoFiles[gridNum] === undefined) {
-		mainWindow.webContents.send('thumbnailImage', ['media\\blank.png']);
-		mainWindow.webContents.send('gridDetails', [false, '']);
-		mainWindow.webContents.send('screenStatus', 'Video not set');
-		return;
-	}
-	const thumbnailPath = `${app.getPath('userData')}\\thumbnails`;
-	const fullPath = `${thumbnailPath}\\${path.parse(videoFiles[gridNum].path).name}.jpg`;
-	const thumbnailImagePath = fullPath;
-
-	fs.access(thumbnailImagePath, fs.constants.R_OK, err => {
-		if (err) {
-			mainWindow.webContents.send('thumbnailImage', ['media\\blank.png']);
-			mainWindow.webContents.send('screenStatus', 'Thumbnail missing');
-		} else {
-			mainWindow.webContents.send('thumbnailImage', [thumbnailImagePath]);
-			mainWindow.webContents.send('screenStatus', false);
-		}
-	});
-
-	// If video file exists
-	const filePath = videoFiles[gridNum].path;
-	fs.access(filePath, fs.constants.R_OK, err => {
-		if (err) {
-			mainWindow.webContents.send('gridDetails', [false, `Video '${filePath}' can not be found`]);
-		} else {
-			const filename = filePath.replace(/^.*[\\/]/, '');
-
-			let execFile = require('child_process');
-
-			({execFile} = execFile);
-			let args = `-v error -select_streams v:0 -of json -show_entries format=filename:stream=duration,width,height,divx_packed,has_b_frames`;
-			args = args.split(' ');
-			// Path may contain spaces so push to end of array separately to avoid split
-			args.push(filePath);
-			execFile(ffprobe.path, args, (error, stdout) => {
-				if (error) {
-					mainWindow.webContents.send('notificationMsg', [{
-						type: 'error',
-						msg: `FFprobe error (get details)`,
-						open: 'https://github.com/SavageCore/new-retro-arcade-neon-attract-screen-tool/issues',
-						log: error
-					}]);
-					return;
-				}
-				const output = JSON.parse(stdout);
-				mainWindow.webContents.send('gridDetails', [filename, output.streams[0].duration, output.streams[0].width, output.streams[0].height, filePath, videoFiles[gridNum].attractVolume]);
+function getDetails(gridNum) {
+	return new Promise(async (resolve, reject) => {
+		let videoFiles = await parseConfig('get', 'videoFiles', false)
+			.catch(err => {
+				reject(new Error(err));
+				return false;
 			});
+		if (!videoFiles) {
+			videoFiles = {};
 		}
+		if (Object.keys(videoFiles).length === 0) {
+			mainWindow.webContents.send('thumbnailImage', ['media\\blank.png']);
+			mainWindow.webContents.send('gridDetails', [false, '']);
+			mainWindow.webContents.send('screenStatus', 'Video not set');
+			reject(new Error('No videos set'));
+			return false;
+		}
+		if (videoFiles[gridNum] === undefined) {
+			mainWindow.webContents.send('thumbnailImage', ['media\\blank.png']);
+			mainWindow.webContents.send('gridDetails', [false, '']);
+			mainWindow.webContents.send('screenStatus', 'Video not set');
+			reject(new Error('Video not set'));
+			return false;
+		}
+		const thumbnailPath = `${app.getPath('userData')}\\thumbnails`;
+		const fullPath = `${thumbnailPath}\\${path.parse(videoFiles[gridNum].path).name}.jpg`;
+		const thumbnailImagePath = fullPath;
+
+		fs.access(thumbnailImagePath, fs.constants.R_OK, err => {
+			if (err) {
+				mainWindow.webContents.send('thumbnailImage', ['media\\blank.png']);
+				mainWindow.webContents.send('screenStatus', 'Thumbnail missing');
+			} else {
+				mainWindow.webContents.send('thumbnailImage', [thumbnailImagePath]);
+				mainWindow.webContents.send('screenStatus', false);
+			}
+		});
+
+		// If video file exists
+		const filePath = videoFiles[gridNum].path;
+		fs.access(filePath, fs.constants.R_OK, err => {
+			if (err) {
+				mainWindow.webContents.send('gridDetails', [false, `Video '${filePath}' can not be found`]);
+				reject(new Error(`Video '${filePath}' can not be found`));
+			} else {
+				const filename = filePath.replace(/^.*[\\/]/, '');
+
+				let execFile = require('child_process');
+
+				({execFile} = execFile);
+				let args = `-v error -select_streams v:0 -of json -show_entries format=filename:stream=duration,width,height,divx_packed,has_b_frames`;
+				args = args.split(' ');
+				// Path may contain spaces so push to end of array separately to avoid split
+				args.push(filePath);
+				execFile(ffprobe.path, args, (error, stdout) => {
+					if (error) {
+						mainWindow.webContents.send('notificationMsg', [{
+							type: 'error',
+							msg: `FFprobe error (get details)`,
+							open: 'https://github.com/SavageCore/new-retro-arcade-neon-attract-screen-tool/issues',
+							log: error
+						}]);
+						reject(new Error(err));
+					}
+					const output = JSON.parse(stdout);
+					mainWindow.webContents.send('gridDetails', [filename, output.streams[0].duration, output.streams[0].width, output.streams[0].height, filePath, videoFiles[gridNum].attractVolume]);
+					resolve(true);
+				});
+			}
+		});
 	});
 }
 
