@@ -67,7 +67,7 @@ function createWindow(BrowserWindow, url) {
 	});
 }
 
-exports.selectVideoFile = function (gridnum) {
+exports.selectVideoFile = function (gridNum) {
 	dialog.showOpenDialog(mainWindow, {
 		filters: [{
 			name: 'Video',
@@ -92,12 +92,12 @@ exports.selectVideoFile = function (gridnum) {
 			}
 
 			// Loop around all returned files
-			const initialGrid = gridnum;
-			let initialNum = gridnum;
+			const initialGrid = gridNum;
+			let initialNum = gridNum;
 			for (let i = 0; i < response.length; i++) {
 				mainWindow.webContents.executeJavaScript(`$('<div class="block-overlay"></div>').appendTo('body');`);
 				let lastFile = false;
-				gridnum = initialNum++;
+				gridNum = initialNum++;
 				if (i === response.length - 1 || response.length === 1) {
 					lastFile = true;
 				}
@@ -105,13 +105,13 @@ exports.selectVideoFile = function (gridnum) {
 					mainWindow.webContents.executeJavaScript(`$(".block-overlay").remove();`);
 				}
 				// Run function
-				saveVideoFile(gridnum, response[i], initialGrid, lastFile);
+				saveVideoFile(gridNum, response[i], initialGrid, lastFile);
 			}
 		}
 	});
 };
 
-function saveVideoFile(gridnum, filePath, initialGrid, lastFile) {
+function saveVideoFile(gridNum, filePath, initialGrid, lastFile) {
 	const sanitize = require('pretty-filename');
 
 	// Sanitize filePath
@@ -160,9 +160,9 @@ function saveVideoFile(gridnum, filePath, initialGrid, lastFile) {
 			}
 			const output = JSON.parse(stdout);
 			const fileDuration = output.streams[0].duration;
-			videoFiles[gridnum] = {};
-			videoFiles[gridnum].duration = fileDuration;
-			videoFiles[gridnum].path = filePath;
+			videoFiles[gridNum] = {};
+			videoFiles[gridNum].duration = fileDuration;
+			videoFiles[gridNum].path = filePath;
 
 			// Check if updating video of default grid and update mainConfig
 			const configData = await parseConfig('get', 'main', false)
@@ -170,7 +170,7 @@ function saveVideoFile(gridnum, filePath, initialGrid, lastFile) {
 					console.error(err);
 				});
 			if (configData !== undefined) {
-				if (configData.defaultVideoGridNum === gridnum) {
+				if (configData.defaultVideoGridNum === gridNum) {
 					configData.defaultVideo = filePath;
 					configData.defaultVideoDuration = fileDuration;
 					await parseConfig('set', 'main', configData)
@@ -283,7 +283,7 @@ exports.selectAttractScreenFile = async function () {
 	});
 };
 
-exports.deleteVideo = async function (gridnum) {
+exports.deleteVideo = async function (gridNum) {
 	const choice = dialog.showMessageBox(
 		mainWindow, {
 			type: 'question',
@@ -297,8 +297,8 @@ exports.deleteVideo = async function (gridnum) {
 				console.error(err);
 			});
 		if (videoFiles) {
-			const thumbnailFilePath = videoFiles[gridnum].path;
-			delete videoFiles[gridnum];
+			const thumbnailFilePath = videoFiles[gridNum].path;
+			delete videoFiles[gridNum];
 			await parseConfig('set', 'videoFiles', videoFiles)
 				.catch(err => {
 					console.error(err);
@@ -307,7 +307,7 @@ exports.deleteVideo = async function (gridnum) {
 				.catch(err => {
 					console.error(err);
 				});
-			if (mainConfig.defaultVideoGridNum === gridnum) {
+			if (mainConfig.defaultVideoGridNum === gridNum) {
 				delete mainConfig.defaultVideoDuration;
 				delete mainConfig.defaultVideoGridNum;
 				delete mainConfig.defaultVideo;
@@ -330,7 +330,7 @@ exports.deleteVideo = async function (gridnum) {
 				}
 				fs.unlink(filePath);
 				mainWindow.webContents.send('thumbnailImage', ['media\\blank.png']);
-				getDetails(gridnum);
+				getDetails(gridNum);
 			});
 		}
 	}
@@ -724,8 +724,8 @@ exports.quitApp = function () {
 	app.quit();
 };
 
-exports.changeGrid = function (gridnum) {
-	getDetails(gridnum);
+exports.changeGrid = function (gridNum) {
+	getDetails(gridNum);
 	getDefaultVideo();
 };
 
@@ -1044,7 +1044,7 @@ function updateChecker() {
 	});
 }
 
-function videoContainsAudio(videoPath, gridnum, callback) {
+function videoContainsAudio(videoPath, gridNum, callback) {
 	let args = [];
 	args.push('-i');
 	args.push(videoPath);
