@@ -14,6 +14,7 @@ const xmlObjects = require('xml-objects');
 const XMLWriter = require('xml-writer');
 const eol = require('eol');
 const xmlfmt = require('xmlfmt');
+const makeDir = require('make-dir');
 
 let mainWindow;
 
@@ -105,7 +106,10 @@ exports.selectVideoFile = function (gridNum) {
 					mainWindow.webContents.executeJavaScript(`$(".block-overlay").remove();`);
 				}
 				// Run function
-				saveVideoFile(gridNum, response[i], initialGrid, lastFile);
+				saveVideoFile(gridNum, response[i], initialGrid, lastFile)
+					.catch(err => {
+						console.error(err);
+					});
 			}
 		}
 	});
@@ -113,88 +117,77 @@ exports.selectVideoFile = function (gridNum) {
 
 function saveVideoFile(gridNum, filePath, initialGrid, lastFile) {
 	const sanitize = require('pretty-filename');
-
-	// Sanitize filePath
-	const dirPath = path.dirname(filePath);
-	const baseName = sanitize(path.basename(filePath));
-	// If different then rename the file
-	if (path.relative(filePath, `${dirPath}\\${baseName}`).length > 0) {
-		fs.renameSync(filePath, `${dirPath}\\${baseName}`);
-		filePath = `${dirPath}\\${baseName}`;
-	}
-
-	// Check file read access
-	fs.access(filePath, fs.constants.R_OK, async error => {
-		if (error) {
-			mainWindow.webContents.send('notificationMsg', [{
-				type: 'error',
-				msg: `Could not read file: ${filePath}`,
-				open: 'https://github.com/SavageCore/new-retro-arcade-neon-attract-screen-tool/issues',
-				log: error
-			}]);
-			return;
+	return new Promise((resolve, reject) => {
+		// Sanitize filePath
+		const dirPath = path.dirname(filePath);
+		const baseName = sanitize(path.basename(filePath));
+		// If different then rename the file
+		if (path.relative(filePath, `${dirPath}\\${baseName}`).length > 0) {
+			fs.renameSync(filePath, `${dirPath}\\${baseName}`);
+			filePath = `${dirPath}\\${baseName}`;
 		}
-		let videoFiles = await parseConfig('get', 'videoFiles', false)
-			.catch(err => {
-				console.error(err);
-			});
-		if (!videoFiles) {
-			videoFiles = {};
-		}
-		// Get video duration
-		let args = `-v error -select_streams v:0 -of json -show_entries stream=duration`;
-		args = args.split(' ');
-		args.push(filePath);
-		let execInfo = require('child_process');
 
-		execInfo = execInfo.execFile;
-		execInfo(ffprobe.path, args, async (error, stdout) => {
+		// Check file read access
+		fs.access(filePath, fs.constants.R_OK, async error => {
 			if (error) {
 				mainWindow.webContents.send('notificationMsg', [{
 					type: 'error',
-					msg: `FFprobe error (getting video duration)`,
+					msg: `Could not read file: ${filePath}`,
 					open: 'https://github.com/SavageCore/new-retro-arcade-neon-attract-screen-tool/issues',
 					log: error
 				}]);
-				return;
+				reject(new Error(`Could not read file: ${filePath}`));
 			}
-			const output = JSON.parse(stdout);
-			const fileDuration = output.streams[0].duration;
-			videoFiles[gridNum] = {};
-			videoFiles[gridNum].duration = fileDuration;
-			videoFiles[gridNum].path = filePath;
-
-			// Check if updating video of default grid and update mainConfig
-			const configData = await parseConfig('get', 'main', false)
+			let videoFiles = await parseConfig('get', 'videoFiles', false)
 				.catch(err => {
-					console.error(err);
+					reject(new Error(err));
 				});
-			if (configData !== undefined) {
-				if (configData.defaultVideoGridNum === gridNum) {
-					configData.defaultVideo = filePath;
-					configData.defaultVideoDuration = fileDuration;
-					await parseConfig('set', 'main', configData)
-						.catch(err => {
-							console.error(err);
-						});
-				}
+			if (!videoFiles) {
+				videoFiles = {};
 			}
+			// Get video duration
+			let args = `-v error -select_streams v:0 -of json -show_entries stream=duration`;
+			args = args.split(' ');
+			args.push(filePath);
+			let execInfo = require('child_process');
 
-			// Check thumbnail directory exists if not create
-			const thumbnailPath = `${app.getPath('userData')}\\thumbnails`;
-			fs.access(thumbnailPath, fs.F_OK, err => {
-				if (err) {
-					fs.mkdir(thumbnailPath, '0777', error => {
-						if (error) {
-							mainWindow.webContents.send('notificationMsg', [{
-								type: 'error',
-								msg: `Could not create thumbnails directory`,
-								open: 'https://github.com/SavageCore/new-retro-arcade-neon-attract-screen-tool/issues',
-								log: error
-							}]);
-						}
-					});
+			execInfo = execInfo.execFile;
+			execInfo(ffprobe.path, args, async (error, stdout) => {
+				if (error) {
+					mainWindow.webContents.send('notificationMsg', [{
+						type: 'error',
+						msg: `FFprobe error (getting video duration)`,
+						open: 'https://github.com/SavageCore/new-retro-arcade-neon-attract-screen-tool/issues',
+						log: error
+					}]);
+					reject(new Error(`FFprobe error (getting video duration)`));
 				}
+				const output = JSON.parse(stdout);
+				const fileDuration = output.streams[0].duration;
+				videoFiles[gridNum] = {};
+				videoFiles[gridNum].duration = fileDuration;
+				videoFiles[gridNum].path = filePath;
+
+				// Check if updating video of default grid and update mainConfig
+				const configData = await parseConfig('get', 'main', false)
+					.catch(err => {
+						reject(new Error(err));
+					});
+				if (configData !== undefined) {
+					if (configData.defaultVideoGridNum === gridNum) {
+						configData.defaultVideo = filePath;
+						configData.defaultVideoDuration = fileDuration;
+						await parseConfig('set', 'main', configData)
+							.catch(err => {
+								reject(new Error(err));
+							});
+					}
+				}
+
+				// Check thumbnail directory exists if not create
+				const thumbnailPath = await makeDir(`${app.getPath('userData')}\\thumbnails`);
+				console.log(thumbnailPath);
+
 				// Generate thumbnail at half way point
 				let execThumbnail = require('child_process');
 
