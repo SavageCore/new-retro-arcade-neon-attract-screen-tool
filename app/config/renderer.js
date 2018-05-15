@@ -12,13 +12,15 @@ require('../notification'); // eslint-disable-line  import/no-unassigned-import
 /* global window:true */
 /* global document:true */
 
-$(document).ready(() => {
-	mainProcess.menuItems(data => {
-		for (let i = 0; i < data.length; i++) {
-			$('#menu_smartphone ul').append(`<li id="menu_${data[i].id}"><span class="glyphicon glyphicon-${data[i].glyphicon}"></span>&nbsp;${data[i].name}</li>`);
-		}
-		require('../menu'); // eslint-disable-line  import/no-unassigned-import
-	});
+$(document).ready(async () => {
+	const menuItems = await mainProcess.menuItems()
+		.catch(err => {
+			console.error(err);
+		});
+	for (let i = 0; i < menuItems.length; i++) {
+		$('#menu_smartphone ul').append(`<li id="menu_${menuItems[i].id}"><span class="glyphicon glyphicon-${menuItems[i].glyphicon}"></span>&nbsp;${menuItems[i].name}</li>`);
+	}
+	require('../menu'); // eslint-disable-line  import/no-unassigned-import
 	mainProcess.availableEncoders(availableEncoders => {
 		let encodersHTML = '';
 		let selected = '';
@@ -33,41 +35,43 @@ $(document).ready(() => {
 		}
 		$('#config-encoder').html(encodersHTML);
 	});
-	mainProcess.parseConfigRenderer('get', 'main', false, configData => {
-		if (configData.renderScale !== undefined) {
-			$('#config-renderScale').val(configData.renderScale);
-		}
-		if (configData.encoder !== undefined) {
-			$('#config-encoder').val(configData.encoder);
-		}
-		if (configData.hwaccel === true) {
-			$('#config-hwaccel').prop('checked', true);
-		}
-		if (configData.muteAudio === true) {
-			$('#config-muteAudio').prop('checked', true);
-		}
-		if (configData.generateReport === true) {
-			$('#config-generateReport').prop('checked', true);
-		}
-		if (configData.extraCabinets === true) {
-			$('#config-extraCabinets').prop('checked', true);
-		}
-		if (configData.maxDuration !== undefined) {
-			if (configData.maxDuration === false) {
-				$('#config-maxDuration').val(null);
-			} else {
-				$('#config-maxDuration').val(configData.maxDuration);
-			}
-		}
-
-		if (configData.attractScreenPath === undefined) {
-			const elem = $('.bottom-bar');
-			elem.html('Set Attract Screen Path!');
-			elem.addClass('bottom-bar-error');
+	const configData = await mainProcess.parseConfigRenderer('get', 'main', false)
+		.catch(err => {
+			console.error(err);
+		});
+	if (configData.renderScale !== undefined) {
+		$('#config-renderScale').val(configData.renderScale);
+	}
+	if (configData.encoder !== undefined) {
+		$('#config-encoder').val(configData.encoder);
+	}
+	if (configData.hwaccel === true) {
+		$('#config-hwaccel').prop('checked', true);
+	}
+	if (configData.muteAudio === true) {
+		$('#config-muteAudio').prop('checked', true);
+	}
+	if (configData.generateReport === true) {
+		$('#config-generateReport').prop('checked', true);
+	}
+	if (configData.extraCabinets === true) {
+		$('#config-extraCabinets').prop('checked', true);
+	}
+	if (configData.maxDuration !== undefined) {
+		if (configData.maxDuration === false) {
+			$('#config-maxDuration').val(null);
 		} else {
-			$('#label-attractScreenPath').html('Attract Screen Video - Set');
+			$('#config-maxDuration').val(configData.maxDuration);
 		}
-	});
+	}
+
+	if (configData.attractScreenPath === undefined) {
+		const elem = $('.bottom-bar');
+		elem.html('Set Attract Screen Path!');
+		elem.addClass('bottom-bar-error');
+	} else {
+		$('#label-attractScreenPath').html('Attract Screen Video - Set');
+	}
 	$('#config-attractScreenPath').off('click').on('click', () => {
 		mainProcess.selectAttractScreenFile();
 	});

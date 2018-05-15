@@ -13,21 +13,24 @@ const notification = require('./notification');
 /* global document:true */
 /* global totalVideos:true */
 
-mainProcess.parseConfigRenderer('get', 'main', false, mainConfig => {
+$(document).ready(async () => {
+	const mainConfig = await mainProcess.parseConfigRenderer('get', 'main', false)
+		.catch(err => {
+			console.error(err);
+		});
 	if (mainConfig.extraCabinets === true) {
 		totalVideos = 35;
 	} else {
 		totalVideos = 30;
 	}
-});
-
-$(document).ready(() => {
-	mainProcess.menuItems(data => {
-		for (let i = 0; i < data.length; i++) {
-			$('#menu_smartphone ul').append(`<li id="menu_${data[i].id}"><span class="glyphicon glyphicon-${data[i].glyphicon}"></span>&nbsp;${data[i].name}</li>`);
-		}
-		require('./menu'); // eslint-disable-line  import/no-unassigned-import
-	});
+	const menuItems = await mainProcess.menuItems()
+		.catch(err => {
+			console.error(err);
+		});
+	for (let i = 0; i < menuItems.length; i++) {
+		$('#menu_smartphone ul').append(`<li id="menu_${menuItems[i].id}"><span class="glyphicon glyphicon-${menuItems[i].glyphicon}"></span>&nbsp;${menuItems[i].name}</li>`);
+	}
+	require('./menu'); // eslint-disable-line  import/no-unassigned-import
 
 	let selectHTML = '';
 	for (let i = 1; i < totalVideos + 1; i++) {
