@@ -45,7 +45,10 @@ $(document).ready(() => {
 	});
 
 	$('#menu_save').click(() => {
-		mainProcess.updateXML();
+		mainProcess.updateXML()
+			.catch(err => {
+				console.error(err);
+			});
 	});
 
 	$('#menu_settings').click(() => {

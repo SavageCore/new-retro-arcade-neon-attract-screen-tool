@@ -969,51 +969,54 @@ function getGamePath() {
 	});
 }
 
-exports.editConfigINI = function (state) {
+exports.editConfigINI = async function (state) {
 	let ConfigIniParser = require('config-ini-parser');
 
 	({ConfigIniParser} = ConfigIniParser);
-	getGamePath(gamePath => {
-		const delimiter = '\r\n';
-		const sectionName = '/Script/ArcadeRift.ArcadeGameUserSettings';
-		const parser = new ConfigIniParser(delimiter);
-		fs.access(`${gamePath}\\NewRetroArcade\\Saved\\Config\\WindowsNoEditor\\GameUserSettings.ini`, fs.constants.R_OK | fs.constants.W_OK, err => {
-			if (err) {
-				return;
-			}
-			parser.parse(fs.readFileSync(`${gamePath}\\NewRetroArcade\\Saved\\Config\\WindowsNoEditor\\GameUserSettings.ini`, 'utf-8'));
-			if (parser.isHaveSection(sectionName)) {
-				// Set AttractMovie if missing
-				if (parser.isHaveOption(sectionName, 'AttractMovie') === false) {
-					parser.set(sectionName, 'AttractMovie', 'AttractScreens.mp4');
-				}
-				switch (state) {
-					case true:
-						// Invalid ini file? Anyway select with strange option name and set 7 rows
-						if (parser.isHaveOption(sectionName, 'AttractMovieLayout=(X=5.000000,Y') === true) {
-							parser.removeOption(sectionName, 'AttractMovieLayout=(X=5.000000,Y');
-							parser.set(sectionName, 'AttractMovieLayout', '(X=5.000000,Y=7.000000)');
-						} else {
-							parser.set(sectionName, 'AttractMovieLayout', '(X=5.000000,Y=7.000000)');
-						}
-						break;
-					case false:
-						// Revert to defaults
-						if (parser.isHaveOption(sectionName, 'AttractMovieLayout=(X=5.000000,Y') === true) {
-							parser.removeOption(sectionName, 'AttractMovieLayout=(X=5.000000,Y');
-							parser.set(sectionName, 'AttractMovieLayout', '(X=5.000000,Y=6.000000)');
-						} else {
-							parser.set(sectionName, 'AttractMovieLayout', '(X=5.000000,Y=6.000000)');
-						}
-						break;
-					default:
-						break;
-				}
-				// Relace new line at start of file
-				const config = parser.stringify(delimiter).replace(/^\r\n|\n/, '');
-				fs.writeFileSync(`${gamePath}\\NewRetroArcade\\Saved\\Config\\WindowsNoEditor\\GameUserSettings.ini`, config);
-			}
+	const gamePath = await getGamePath()
+		.catch(err => {
+			console.error(err);
+			return false;
 		});
+	const delimiter = '\r\n';
+	const sectionName = '/Script/ArcadeRift.ArcadeGameUserSettings';
+	const parser = new ConfigIniParser(delimiter);
+	fs.access(`${gamePath}\\NewRetroArcade\\Saved\\Config\\WindowsNoEditor\\GameUserSettings.ini`, fs.constants.R_OK | fs.constants.W_OK, err => {
+		if (err) {
+			return;
+		}
+		parser.parse(fs.readFileSync(`${gamePath}\\NewRetroArcade\\Saved\\Config\\WindowsNoEditor\\GameUserSettings.ini`, 'utf-8'));
+		if (parser.isHaveSection(sectionName)) {
+			// Set AttractMovie if missing
+			if (parser.isHaveOption(sectionName, 'AttractMovie') === false) {
+				parser.set(sectionName, 'AttractMovie', 'AttractScreens.mp4');
+			}
+			switch (state) {
+				case true:
+					// Invalid ini file? Anyway select with strange option name and set 7 rows
+					if (parser.isHaveOption(sectionName, 'AttractMovieLayout=(X=5.000000,Y') === true) {
+						parser.removeOption(sectionName, 'AttractMovieLayout=(X=5.000000,Y');
+						parser.set(sectionName, 'AttractMovieLayout', '(X=5.000000,Y=7.000000)');
+					} else {
+						parser.set(sectionName, 'AttractMovieLayout', '(X=5.000000,Y=7.000000)');
+					}
+					break;
+				case false:
+					// Revert to defaults
+					if (parser.isHaveOption(sectionName, 'AttractMovieLayout=(X=5.000000,Y') === true) {
+						parser.removeOption(sectionName, 'AttractMovieLayout=(X=5.000000,Y');
+						parser.set(sectionName, 'AttractMovieLayout', '(X=5.000000,Y=6.000000)');
+					} else {
+						parser.set(sectionName, 'AttractMovieLayout', '(X=5.000000,Y=6.000000)');
+					}
+					break;
+				default:
+					break;
+			}
+			// Relace new line at start of file
+			const config = parser.stringify(delimiter).replace(/^\r\n|\n/, '');
+			fs.writeFileSync(`${gamePath}\\NewRetroArcade\\Saved\\Config\\WindowsNoEditor\\GameUserSettings.ini`, config);
+		}
 	});
 };
 
@@ -1151,25 +1154,32 @@ function searchInObj(s, obj) {
 }
 
 exports.updateXML = function () {
-	const xw = new XMLWriter();
-	xw.startDocument('1.0', 'utf-8');
-	xw.startElement('ArcadeMachines');
-	mainWindow.webContents.executeJavaScript('$(\'#grey_back\').click()');
-	getGamePath(arcadeMachines => {
-		fs.access(`${arcadeMachines}\\NewRetroArcade\\Content\\ArcadeMachines.xml`, fs.constants.R_OK | fs.constants.W_OK, async err => {
+	return new Promise(async (resolve, reject) => {
+		const xw = new XMLWriter();
+		xw.startDocument('1.0', 'utf-8');
+		xw.startElement('ArcadeMachines');
+		mainWindow.webContents.executeJavaScript('$(\'#grey_back\').click()');
+		const gamePath = await getGamePath()
+			.catch(err => {
+				reject(new Error(err));
+				return false;
+			});
+		fs.access(`${gamePath}\\NewRetroArcade\\Content\\ArcadeMachines.xml`, fs.constants.R_OK | fs.constants.W_OK, async err => {
 			if (err) {
 				mainWindow.webContents.send('notificationMsg', [{
 					type: 'warning',
 					msg: `Unable to read/write ArcadeMachines.xml`,
-					log: `Unable to read/write: ${arcadeMachines}\\NewRetroArcade\\Content\\ArcadeMachines.xml`
+					log: `Unable to read/write: ${gamePath}\\NewRetroArcade\\Content\\ArcadeMachines.xml`
 				}]);
-				return;
+				reject(new Error(`Unable to read/write: ${gamePath}\\NewRetroArcade\\Content\\ArcadeMachines.xml`));
+				return false;
 			}
 			const videoFiles = await parseConfig('get', 'videoFiles', false)
 				.catch(err => {
-					console.error(err);
+					reject(new Error(err));
+					return false;
 				});
-			const xmlPath = `${arcadeMachines}\\NewRetroArcade\\Content\\ArcadeMachines.xml`;
+			const xmlPath = `${gamePath}\\NewRetroArcade\\Content\\ArcadeMachines.xml`;
 			fs.createReadStream(xmlPath)
 				.pipe(xmlObjects({
 					explicitRoot: false,
@@ -1276,7 +1286,7 @@ exports.updateXML = function () {
 						}
 					}
 					xw.endDocument();
-					fs.writeFile(`${arcadeMachines}\\NewRetroArcade\\Content\\ArcadeMachines.xml`, eol.crlf(xmlfmt(xw.toString())), {
+					fs.writeFile(`${gamePath}\\NewRetroArcade\\Content\\ArcadeMachines.xml`, eol.crlf(xmlfmt(xw.toString())), {
 						encoding: 'utf-8'
 					}, error => {
 						if (error) {
@@ -1286,14 +1296,15 @@ exports.updateXML = function () {
 								open: 'https://github.com/SavageCore/new-retro-arcade-neon-attract-screen-tool/issues',
 								log: error
 							}]);
-							return;
+							reject(new Error(`Could not write to: ${gamePath}\\NewRetroArcade\\Content\\ArcadeMachines.xml`));
+							return false;
 						}
 						mainWindow.webContents.send('notificationMsg', [{
 							type: 'success',
 							msg: `Config saved!`
 						}]);
+						resolve(true);
 					});
-					await fs.writeFile(`${arcadeMachines}\\NewRetroArcade\\Content\\Arcades\\${data}.arcade`, 'Hello Node.js');
 				});
 		});
 	});
