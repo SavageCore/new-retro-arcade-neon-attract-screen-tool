@@ -203,6 +203,9 @@ function saveVideoFile(gridnum, filePath, initialGrid, lastFile) {
 				let args = `-ss ${sstime} -y -i`;
 				args = args.split(' ');
 				args.push(filePath);
+				if (configData.generateReport === true) {
+					args.push('-report');
+				}
 				let args2 = `-vframes 1 -q:v 2`;
 				args2 = args2.split(' ');
 				args2.push(`${thumbnailPath}\\${path.parse(filePath).name}.jpg`);
@@ -231,49 +234,52 @@ function saveVideoFile(gridnum, filePath, initialGrid, lastFile) {
 	});
 }
 
-exports.selectAttractScreenFile = function () {
-	getGamePath(data => {
-		const options = {
-			filters: [{
-				name: 'AttractScreens.mp4',
-				extensions: ['mp4']
-			}],
-			properties: ['openFile']
-		};
-		if (data !== false) {
-			options.defaultPath = `${data}\\NewRetroArcade\\Content\\Movies`;
-		}
-		dialog.showOpenDialog(mainWindow, options, response => {
-			if (response !== undefined) {
-				fs.access(response[0], fs.constants.R_OK, async error => {
-					if (error) {
-						mainWindow.webContents.send('notificationMsg', [{
-							type: 'error',
-							msg: `Could not read file: ${response[0]}`,
-							open: 'https://github.com/SavageCore/new-retro-arcade-neon-attract-screen-tool/issues',
-							log: error
-						}]);
-						return;
-					}
-					const configData = await parseConfig('get', 'main', false)
+exports.selectAttractScreenFile = async function () {
+	const gamePath = await getGamePath()
+		.catch(err => {
+			console.error(err);
+			return false;
+		});
+	const options = {
+		filters: [{
+			name: 'AttractScreens.mp4',
+			extensions: ['mp4']
+		}],
+		properties: ['openFile']
+	};
+	if (gamePath) {
+		options.defaultPath = `${gamePath}\\NewRetroArcade\\Content\\Movies`;
+	}
+	dialog.showOpenDialog(mainWindow, options, response => {
+		if (response !== undefined) {
+			fs.access(response[0], fs.constants.R_OK, async error => {
+				if (error) {
+					mainWindow.webContents.send('notificationMsg', [{
+						type: 'error',
+						msg: `Could not read file: ${response[0]}`,
+						open: 'https://github.com/SavageCore/new-retro-arcade-neon-attract-screen-tool/issues',
+						log: error
+					}]);
+					return;
+				}
+				const configData = await parseConfig('get', 'main', false)
+					.catch(err => {
+						console.error(err);
+					});
+				if (configData !== undefined) {
+					[configData.attractScreenPath] = response;
+					await parseConfig('set', 'main', configData)
 						.catch(err => {
 							console.error(err);
 						});
-					if (configData !== undefined) {
-						[configData.attractScreenPath] = response;
-						await parseConfig('set', 'main', configData)
-							.catch(err => {
-								console.error(err);
-							});
-						mainWindow.webContents.send('attractScreenSet', true);
-						mainWindow.webContents.send('notificationMsg', [{
-							type: 'success',
-							msg: `Attract Screen Set!`
-						}]);
-					}
-				});
-			}
-		});
+					mainWindow.webContents.send('attractScreenSet', true);
+					mainWindow.webContents.send('notificationMsg', [{
+						type: 'success',
+						msg: `Attract Screen Set!`
+					}]);
+				}
+			});
+		}
 	});
 };
 
@@ -439,43 +445,44 @@ exports.renderVideo = async function () { // eslint-disable-line complexity
 			}
 
 			// Extract Audio
-			getGamePath(gamePath => {
-				if (gamePath !== false) {
-					const audioFilePath = `${gamePath}\\NewRetroArcade\\Content\\Arcades`;
-					for (let i = 0; i < totalVideos; i++) {
-						if (videoFiles[i] !== undefined) {
-							// Does video contain audio stream
-							videoContainsAudio(videoFiles[i].path, i, data => { // eslint-disable-line no-loop-func
-								if (data[0] === true) {
-									let args = [];
-									args.push('-i');
-									args.push(data[1]);
-									if (generateReport === true) {
-										args.push('-report');
-									}
-									const argString = `-y -vn -q:a 0 -map a`.split(' ');
-									args = args.concat(argString);
-									args.push(`${audioFilePath}\\${path.parse(data[1]).name}.mp3`);
-									// Extract Audio
-									let execFile = require('child_process');
+			const gamePath = await getGamePath()
+				.catch(err => {
+					console.error(err);
+					return false;
+				});
+			const audioFilePath = `${gamePath}\\NewRetroArcade\\Content\\Arcades`;
+			for (let i = 0; i < totalVideos; i++) {
+				if (videoFiles[i] !== undefined) {
+					// Does video contain audio stream
+					videoContainsAudio(videoFiles[i].path, i, data => { // eslint-disable-line no-loop-func
+						if (data[0] === true) {
+							let args = [];
+							args.push('-i');
+							args.push(data[1]);
+							if (generateReport === true) {
+								args.push('-report');
+							}
+							const argString = `-y -vn -q:a 0 -map a`.split(' ');
+							args = args.concat(argString);
+							args.push(`${audioFilePath}\\${path.parse(data[1]).name}.mp3`);
+							// Extract Audio
+							let execFile = require('child_process');
 
-									({execFile} = execFile);
-									execFile(ffmpeg.path, args, error => {
-										if (error) {
-											mainWindow.webContents.send('notificationMsg', [{
-												type: 'error',
-												msg: `Extract audio failed: ${data[1]}`,
-												open: 'https://github.com/SavageCore/new-retro-arcade-neon-attract-screen-tool/issues',
-												log: error
-											}]);
-										}
-									});
+							({execFile} = execFile);
+							execFile(ffmpeg.path, args, error => {
+								if (error) {
+									mainWindow.webContents.send('notificationMsg', [{
+										type: 'error',
+										msg: `Extract audio failed: ${data[1]}`,
+										open: 'https://github.com/SavageCore/new-retro-arcade-neon-attract-screen-tool/issues',
+										log: error
+									}]);
 								}
 							});
 						}
-					}
+					});
 				}
-			});
+			}
 
 			mainWindow.webContents.send('render', ['start']);
 			let listCommand = '';
@@ -919,7 +926,7 @@ exports.availableEncoders = function (callback) {
 	callback(availableEncoders);
 };
 
-function getGamePath(callback) {
+function getGamePath() {
 	const Registry = require('winreg');
 
 	const regKey = new Registry({
@@ -927,18 +934,20 @@ function getGamePath(callback) {
 		key: '\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Steam App 465780\\'
 	});
 
-	regKey.values((error, items) => {
-		if (error) {
-			// Registry key not found, game not installed
-			callback(false);
-		} else {
-			// Key found loop until InstallLocation and callback with value
-			for (let i = 0; i < items.length; i++) {
-				if (items[i].name === 'InstallLocation') {
-					callback(items[i].value);
+	return new Promise((resolve, reject) => {
+		regKey.values((error, items) => {
+			if (error) {
+				reject(new Error('Registry key not found, game not installed'));
+			} else {
+				// Key found loop until InstallLocation and resolve with value
+				for (let i = 0; i < items.length; i++) {
+					if (items[i].name === 'InstallLocation') {
+						resolve(items[i].value);
+					}
 				}
+				reject(new Error('Registry key found, could not find InstallLocation'));
 			}
-		}
+		});
 	});
 }
 
