@@ -21,20 +21,22 @@ $(document).ready(async () => {
 		$('#menu_smartphone ul').append(`<li id="menu_${menuItems[i].id}"><span class="glyphicon glyphicon-${menuItems[i].glyphicon}"></span>&nbsp;${menuItems[i].name}</li>`);
 	}
 	require('../menu'); // eslint-disable-line  import/no-unassigned-import
-	mainProcess.availableEncoders(availableEncoders => {
-		let encodersHTML = '';
-		let selected = '';
-		for (const i in availableEncoders) {
-			if ({}.hasOwnProperty.call(availableEncoders, i)) {
-				if (i === '0') {
-					selected = ' selected';
-				}
-				encodersHTML += `<option value="${availableEncoders[i].id}"${selected}>${availableEncoders[i].name}</option>`;
-				selected = '';
+	const availableEncoders = await mainProcess.availableEncoders()
+		.catch(err => {
+			console.error(err);
+		});
+	let encodersHTML = '';
+	let selected = '';
+	for (const i in availableEncoders) {
+		if ({}.hasOwnProperty.call(availableEncoders, i)) {
+			if (i === '0') {
+				selected = ' selected';
 			}
+			encodersHTML += `<option value="${availableEncoders[i].id}"${selected}>${availableEncoders[i].name}</option>`;
+			selected = '';
 		}
-		$('#config-encoder').html(encodersHTML);
-	});
+	}
+	$('#config-encoder').html(encodersHTML);
 	const configData = await mainProcess.parseConfigRenderer('get', 'main', false)
 		.catch(err => {
 			console.error(err);

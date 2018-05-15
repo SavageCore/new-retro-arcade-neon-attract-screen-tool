@@ -907,7 +907,7 @@ function parseConfig(action, configFile, configData) {
 
 exports.parseConfigRenderer = parseConfig;
 
-exports.availableEncoders = function (callback) {
+exports.availableEncoders = function () {
 	const requestedEncoders = {
 		0: {
 			id: 'libx264',
@@ -922,24 +922,26 @@ exports.availableEncoders = function (callback) {
 			name: 'QuickSync (Intel GPU)'
 		}
 	};
-	const availableEncoders = {};
-	for (const i in requestedEncoders) {
-		if ({}.hasOwnProperty.call(requestedEncoders, i)) {
-			let args = `-h encoder=${requestedEncoders[i].id}`;
-			args = args.split(' ');
-			let execEncoders = require('child_process');
+	return new Promise(resolve => {
+		const availableEncoders = {};
+		for (const i in requestedEncoders) {
+			if ({}.hasOwnProperty.call(requestedEncoders, i)) {
+				let args = `-h encoder=${requestedEncoders[i].id}`;
+				args = args.split(' ');
+				let execEncoders = require('child_process');
 
-			execEncoders = execEncoders.execFileSync;
-			let output = execEncoders(ffmpeg.path, args);
-			output = output.toString().trim();
-			if (output !== `Codec '${requestedEncoders[i].id}' is not recognized by FFmpeg.`) {
-				availableEncoders[i] = {};
-				availableEncoders[i].id = requestedEncoders[i].id;
-				availableEncoders[i].name = requestedEncoders[i].name;
+				execEncoders = execEncoders.execFileSync;
+				let output = execEncoders(ffmpeg.path, args);
+				output = output.toString().trim();
+				if (output !== `Codec '${requestedEncoders[i].id}' is not recognized by FFmpeg.`) {
+					availableEncoders[i] = {};
+					availableEncoders[i].id = requestedEncoders[i].id;
+					availableEncoders[i].name = requestedEncoders[i].name;
+				}
 			}
 		}
-	}
-	callback(availableEncoders);
+		resolve(availableEncoders);
+	});
 };
 
 function getGamePath() {
