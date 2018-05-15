@@ -584,14 +584,16 @@ exports.renderVideo = async function () { // eslint-disable-line complexity
 					}]);
 				} else {
 					fs.access(attractScreenPath, fs.constants.W_OK, err => {
-						mainWindow.webContents.send('render', ['end']);
-						mainWindow.webContents.send('notificationMsg', [{
-							type: 'error',
-							msg: `Could not write to Attract Screen Path`,
-							delay: 6000,
-							log: err
-						}]);
-						return false;
+						if (err) {
+							mainWindow.webContents.send('render', ['end']);
+							mainWindow.webContents.send('notificationMsg', [{
+								type: 'error',
+								msg: `Could not write to Attract Screen Path`,
+								delay: 6000,
+								log: err
+							}]);
+							return false;
+						}
 					});
 					mainWindow.webContents.send('render', ['end', true]);
 					mainWindow.webContents.send('notificationMsg', [{
