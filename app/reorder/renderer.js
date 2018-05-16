@@ -11,28 +11,34 @@ require('pkginfo')(module, 'version');
 /* global window:true */
 /* global document:true */
 
-$(document).ready(() => {
-	mainProcess.menuItems(data => {
-		for (let i = 0; i < data.length; i++) {
-			$('#menu_smartphone ul').append(`<li id="menu_${data[i].id}"><span class="glyphicon glyphicon-${data[i].glyphicon}"></span>&nbsp;${data[i].name}</li>`);
-		}
-		require('../menu'); // eslint-disable-line  import/no-unassigned-import
-	});
-	mainProcess.sortableList(data => {
-		mainProcess.parseConfigRenderer('get', 'main', false, mainConfig => {
-			let length;
-			if (mainConfig.extraCabinets === true) {
-				({length} = Object.keys(data));
-			} else {
-				length = 30;
-			}
-			for (let i = 0; i < length; i++) {
-				if (data[i]) {
-					$('#videoFiles').append(`<li class="list-group-item"><span class="badge">${i + 1}</span>${path.basename(data[i].path)}</li>`);
-				}
-			}
+$(document).ready(async () => {
+	const menuItems = await mainProcess.menuItems()
+		.catch(err => {
+			console.error(err);
 		});
-	});
+	for (let i = 0; i < menuItems.length; i++) {
+		$('#menu_smartphone ul').append(`<li id="menu_${menuItems[i].id}"><span class="glyphicon glyphicon-${menuItems[i].glyphicon}"></span>&nbsp;${menuItems[i].name}</li>`);
+	}
+	require('../menu'); // eslint-disable-line  import/no-unassigned-import
+	const videoFiles = await mainProcess.sortableList()
+		.catch(err => {
+			console.error(err);
+		});
+	const mainConfig = await mainProcess.parseConfigRenderer('get', 'main', false)
+		.catch(err => {
+			console.error(err);
+		});
+	let length;
+	if (mainConfig.extraCabinets === true) {
+		({length} = Object.keys(videoFiles));
+	} else {
+		length = 30;
+	}
+	for (let i = 0; i < length; i++) {
+		if (videoFiles[i]) {
+			$('#videoFiles').append(`<li class="list-group-item"><span class="badge">${i + 1}</span>${path.basename(videoFiles[i].path)}</li>`);
+		}
+	}
 
 	$('.bottom-bar').addClass('bottom-bar-info');
 	$('.bottom-bar').html(`Version: ${module.exports.version}`);
@@ -45,36 +51,42 @@ Sortable.create(el, {
 	}
 });
 
-function switchGridPosition(from, to) {
-	mainProcess.parseConfigRenderer('get', 'videoFiles', false, videoFiles => {
-		let videoFilesTmp = {};
-		let videoFilesArr = [];
-		// Convert to array
-		videoFilesArr = Object.keys(videoFiles).map(key => videoFiles[key]);
-		// Move item in array
-		videoFilesArr = arrayMove(videoFilesArr, from, to);
-		// Convert back to Object
-		videoFilesTmp = videoFilesArr.reduce((o, v, i) => {
-			o[i] = v;
-			return o;
-		}, {});
-		// Save to config
-		mainProcess.parseConfigRenderer('set', 'videoFiles', videoFilesTmp, () => {
-			// Check if reordering default video and update mainConfig with new gridnum
-			mainProcess.parseConfigRenderer('get', 'main', false, configData => {
-				if (configData !== undefined) {
-					if (configData.defaultVideoGridNum === from) {
-						configData.defaultVideoGridNum = to;
-						mainProcess.parseConfigRenderer('set', 'main', configData);
-					}
-				}
-			});
-			// Re number the list
-			let i = 1;
-			$('#videoFiles li').each(function () {
-				$(this)[0].firstChild.innerText = i++;
-			});
+async function switchGridPosition(from, to) {
+	const videoFiles = await mainProcess.parseConfigRenderer('get', 'videoFiles', false)
+		.catch(err => {
+			console.error(err);
 		});
+	let videoFilesTmp = {};
+	let videoFilesArr = [];
+	// Convert to array
+	videoFilesArr = Object.keys(videoFiles).map(key => videoFiles[key]);
+	// Move item in array
+	videoFilesArr = arrayMove(videoFilesArr, from, to);
+	// Convert back to Object
+	videoFilesTmp = videoFilesArr.reduce((o, v, i) => {
+		o[i] = v;
+		return o;
+	}, {});
+	// Save to config
+	await mainProcess.parseConfigRenderer('set', 'videoFiles', videoFilesTmp)
+		.catch(err => {
+			console.error(err);
+		});
+	// Check if reordering default video and update mainConfig with new gridnum
+	const configData = await mainProcess.parseConfigRenderer('get', 'main', false)
+		.catch(err => {
+			console.error(err);
+		});
+	if (configData !== undefined) {
+		if (configData.defaultVideoGridNum === from) {
+			configData.defaultVideoGridNum = to;
+			await mainProcess.parseConfigRenderer('set', 'main', configData);
+		}
+	}
+	// Re number the list
+	let i = 1;
+	$('#videoFiles li').each(function () {
+		$(this)[0].firstChild.innerText = i++;
 	});
 }
 

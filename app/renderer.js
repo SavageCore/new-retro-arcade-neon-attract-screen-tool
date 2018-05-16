@@ -13,21 +13,24 @@ const notification = require('./notification');
 /* global document:true */
 /* global totalVideos:true */
 
-mainProcess.parseConfigRenderer('get', 'main', false, mainConfig => {
+$(document).ready(async () => {
+	const mainConfig = await mainProcess.parseConfigRenderer('get', 'main', false)
+		.catch(err => {
+			console.error(err);
+		});
 	if (mainConfig.extraCabinets === true) {
 		totalVideos = 35;
 	} else {
 		totalVideos = 30;
 	}
-});
-
-$(document).ready(() => {
-	mainProcess.menuItems(data => {
-		for (let i = 0; i < data.length; i++) {
-			$('#menu_smartphone ul').append(`<li id="menu_${data[i].id}"><span class="glyphicon glyphicon-${data[i].glyphicon}"></span>&nbsp;${data[i].name}</li>`);
-		}
-		require('./menu'); // eslint-disable-line  import/no-unassigned-import
-	});
+	const menuItems = await mainProcess.menuItems()
+		.catch(err => {
+			console.error(err);
+		});
+	for (let i = 0; i < menuItems.length; i++) {
+		$('#menu_smartphone ul').append(`<li id="menu_${menuItems[i].id}"><span class="glyphicon glyphicon-${menuItems[i].glyphicon}"></span>&nbsp;${menuItems[i].name}</li>`);
+	}
+	require('./menu'); // eslint-disable-line  import/no-unassigned-import
 
 	let selectHTML = '';
 	for (let i = 1; i < totalVideos + 1; i++) {
@@ -65,7 +68,10 @@ $(document).ready(() => {
 	});
 	$('#navbar_page select').change(function () {
 		$('#attract_screen').data('gridnum', $(this).val());
-		mainProcess.changeGrid($('#attract_screen').data('gridnum') - 1);
+		mainProcess.changeGrid($('#attract_screen').data('gridnum') - 1)
+			.catch(err => {
+				console.error(err);
+			});
 		$('#navbar_page select option').each(function () {
 			if ($(this).val() === $('#attract_screen').data('gridnum')) {
 				$(this).prop('selected', true);
@@ -201,7 +207,10 @@ function navbarPrevPage() {
 		prevGrid = totalVideos;
 	}
 	$('#attract_screen').data('gridnum', prevGrid);
-	mainProcess.changeGrid(prevGrid - 1);
+	mainProcess.changeGrid(prevGrid - 1)
+		.catch(err => {
+			console.error(err);
+		});
 	$('#navbar_page select option').each(function () {
 		if (Number($(this).val()) === Number($('#attract_screen').data('gridnum'))) {
 			$(this).prop('selected', true);
@@ -218,7 +227,11 @@ function navbarNextPage() {
 		nextGrid = 1;
 	}
 	$('#attract_screen').data('gridnum', nextGrid);
-	mainProcess.changeGrid(nextGrid - 1);
+	mainProcess.changeGrid(nextGrid - 1)
+		.catch(err => {
+			console.error(err);
+			return false;
+		});
 	$('#navbar_page select option').each(function () {
 		if (Number($(this).val()) === Number($('#attract_screen').data('gridnum'))) {
 			$(this).prop('selected', true);
