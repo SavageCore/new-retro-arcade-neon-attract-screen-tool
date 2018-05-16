@@ -933,6 +933,7 @@ exports.availableEncoders = function () {
 				let execEncoders = require('child_process');
 
 				execEncoders = execEncoders.execFileSync;
+				console.log(args);
 				let output = execEncoders(ffmpeg.path, args);
 				output = output.toString().trim();
 				if (output !== `Codec '${requestedEncoders[i].id}' is not recognized by FFmpeg.`) {
@@ -1322,4 +1323,26 @@ exports.attractVolume = async function (gridNum, value) {
 		.catch(err => {
 			console.error(err);
 		});
+};
+
+exports.createArcade = function () {
+	return new Promise(async (resolve, reject) => {
+		const gamePath = await getGamePath()
+			.catch(err => {
+				reject(new Error(err));
+				return false;
+			});
+		fs.writeFile(`${gamePath}\\NewRetroArcade\\Content\\Arcades\\game.json`, 'json', err => {
+			if (err) {
+				mainWindow.webContents.send('notificationMsg', [{
+					type: 'error',
+					msg: `Could not write arcade file`,
+					open: 'https://github.com/SavageCore/new-retro-arcade-neon-attract-screen-tool/issues',
+					log: err
+				}]);
+				reject(new Error(`Could not write to: ${gamePath}\\NewRetroArcade\\Content\\Arcades\\game.json`));
+				return false;
+			}
+		});
+	});
 };
