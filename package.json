@@ -27,7 +27,7 @@
     "electron": "^2.0.1",
     "stylelint": "^9.2.1",
     "stylelint-config-standard": "^18.2.0",
-    "xo": "^0.21.0"
+    "xo": "^0.21.1"
   },
   "dependencies": {
     "@ffmpeg-installer/ffmpeg": "^1.0.14",
