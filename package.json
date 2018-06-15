@@ -32,7 +32,7 @@
   "dependencies": {
     "@ffmpeg-installer/ffmpeg": "^1.0.15",
     "@ffprobe-installer/ffprobe": "^1.0.9",
-    "config-ini-parser": "^1.1.7",
+    "config-ini-parser": "^1.2.0",
     "electron-download": "^4.1.0",
     "electron-json-storage": "^4.1.0",
     "electron-unhandled": "^1.1.0",
