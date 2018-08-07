@@ -27,7 +27,7 @@
     "electron": "^2.0.6",
     "stylelint": "^9.4.0",
     "stylelint-config-standard": "^18.2.0",
-    "xo": "^0.21.1"
+    "xo": "^0.22.0"
   },
   "dependencies": {
     "@ffmpeg-installer/ffmpeg": "^1.0.15",
@@ -67,7 +67,8 @@
         1,
         10
       ],
-      "block-scoped-var": 0
+			"block-scoped-var": 0,
+			"no-async-promise-executor": 0
     },
     "prettifier": true
   }

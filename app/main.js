@@ -427,13 +427,13 @@ exports.renderVideo = async function () { // eslint-disable-line complexity
 				let divison;
 				if (videoFiles[i] === undefined) {
 					divison = Math.ceil(totalTime / defaultVideoDuration);
-					for (let ii = 0; ii < divison; ii++) {
+					for (let ii = 0; ii < divison; ii++) { // eslint-disable-line max-depth
 						listFileLine += `file '${defaultVideo}'\r\n`;
 					}
 					fs.writeFileSync(`${app.getPath('temp')}\\${i}list.txt`, listFileLine);
 				} else {
 					divison = Math.ceil(totalTime / videoFiles[i].duration);
-					for (let ii = 0; ii < divison; ii++) {
+					for (let ii = 0; ii < divison; ii++) { // eslint-disable-line max-depth
 						listFileLine += `file '${videoFiles[i].path}'\r\n`;
 					}
 					fs.writeFileSync(`${app.getPath('temp')}\\${i}list.txt`, listFileLine);
