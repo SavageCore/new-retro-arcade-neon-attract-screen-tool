@@ -33,7 +33,7 @@
     "@ffmpeg-installer/ffmpeg": "^1.0.15",
     "@ffprobe-installer/ffprobe": "^1.0.9",
     "config-ini-parser": "^1.2.0",
-    "electron-download": "^4.1.0",
+    "electron-download": "^4.1.1",
     "electron-json-storage": "^4.1.1",
     "electron-unhandled": "^1.1.0",
     "eol": "^0.9.1",
