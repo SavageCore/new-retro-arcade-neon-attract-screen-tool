@@ -14,16 +14,16 @@ require('../notification'); // eslint-disable-line  import/no-unassigned-import
 
 $(document).ready(async () => {
 	const menuItems = await mainProcess.menuItems()
-		.catch(err => {
-			console.error(err);
+		.catch(error => {
+			console.error(error);
 		});
 	for (let i = 0; i < menuItems.length; i++) {
 		$('#menu_smartphone ul').append(`<li id="menu_${menuItems[i].id}"><span class="glyphicon glyphicon-${menuItems[i].glyphicon}"></span>&nbsp;${menuItems[i].name}</li>`);
 	}
 	require('../menu'); // eslint-disable-line  import/no-unassigned-import
 	const availableEncoders = await mainProcess.availableEncoders()
-		.catch(err => {
-			console.error(err);
+		.catch(error => {
+			console.error(error);
 		});
 	let encodersHTML = '';
 	let selected = '';
@@ -38,8 +38,9 @@ $(document).ready(async () => {
 	}
 	$('#config-encoder').html(encodersHTML);
 	const configData = await mainProcess.parseConfigRenderer('get', 'main', false)
-		.catch(err => {
-			console.error(err);
+		.catch(error => {
+			console.error(error);
+			console.error(error);
 		});
 	if (configData.renderScale !== undefined) {
 		$('#config-renderScale').val(configData.renderScale);

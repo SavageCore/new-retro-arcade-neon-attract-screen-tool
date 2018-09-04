@@ -25,8 +25,8 @@ app.on('ready', async () => {
 	// Check for game installation path / first run
 	// Need to set muteAudio default here so it can be correctly toggled by user in settings
 	const mainConfig = await parseConfig('get', 'main', false)
-		.catch(err => {
-			console.error(err);
+		.catch(error => {
+			console.error(error);
 		});
 	mainWindow = new BrowserWindow({
 		width: 480,
@@ -81,8 +81,8 @@ exports.selectVideoFile = function (gridNum) {
 	}, async response => {
 		if (response !== undefined) {
 			const mainConfig = await parseConfig('get', 'main', false)
-				.catch(err => {
-					console.error(err);
+				.catch(error => {
+					console.error(error);
 				});
 			let totalVideos;
 			if (mainConfig.extraCabinets === true) {
@@ -99,19 +99,19 @@ exports.selectVideoFile = function (gridNum) {
 			const initialGrid = gridNum;
 			let initialNum = gridNum;
 			for (let i = 0; i < response.length; i++) {
-				mainWindow.webContents.executeJavaScript(`$('<div class="block-overlay"></div>').appendTo('body');`);
+				mainWindow.webContents.executeJavaScript('$(\'<div class="block-overlay"></div>\').appendTo(\'body\');');
 				let lastFile = false;
 				gridNum = initialNum++;
 				if (i === response.length - 1 || response.length === 1) {
 					lastFile = true;
 				}
 				if (lastFile) {
-					mainWindow.webContents.executeJavaScript(`$(".block-overlay").remove();`);
+					mainWindow.webContents.executeJavaScript('$(".block-overlay").remove();');
 				}
 				// Run function
 				saveVideoFile(gridNum, response[i], initialGrid, lastFile)
-					.catch(err => {
-						console.error(err);
+					.catch(error => {
+						console.error(error);
 					});
 			}
 		}
@@ -142,14 +142,14 @@ function saveVideoFile(gridNum, filePath, initialGrid, lastFile) {
 				reject(new Error(`Could not read file: ${filePath}`));
 			}
 			let videoFiles = await parseConfig('get', 'videoFiles', false)
-				.catch(err => {
-					reject(new Error(err));
+				.catch(error2 => {
+					reject(new Error(error2));
 				});
 			if (!videoFiles) {
 				videoFiles = {};
 			}
 			// Get video duration
-			let args = `-v error -select_streams v:0 -of json -show_entries stream=duration`;
+			let args = '-v error -select_streams v:0 -of json -show_entries stream=duration';
 			args = args.split(' ');
 			args.push(filePath);
 			let execInfo = require('child_process');
@@ -159,11 +159,11 @@ function saveVideoFile(gridNum, filePath, initialGrid, lastFile) {
 				if (error) {
 					mainWindow.webContents.send('notificationMsg', [{
 						type: 'error',
-						msg: `FFprobe error (getting video duration)`,
+						msg: 'FFprobe error (getting video duration)',
 						open: 'https://github.com/SavageCore/new-retro-arcade-neon-attract-screen-tool/issues',
 						log: error
 					}]);
-					reject(new Error(`FFprobe error (getting video duration)`));
+					reject(new Error('FFprobe error (getting video duration)'));
 				}
 				const output = JSON.parse(stdout);
 				const fileDuration = output.streams[0].duration;
@@ -173,16 +173,16 @@ function saveVideoFile(gridNum, filePath, initialGrid, lastFile) {
 
 				// Check if updating video of default grid and update mainConfig
 				const configData = await parseConfig('get', 'main', false)
-					.catch(err => {
-						reject(new Error(err));
+					.catch(error2 => {
+						reject(new Error(error2));
 					});
 				if (configData !== undefined) {
 					if (configData.defaultVideoGridNum === gridNum) {
 						configData.defaultVideo = filePath;
 						configData.defaultVideoDuration = fileDuration;
 						await parseConfig('set', 'main', configData)
-							.catch(err => {
-								reject(new Error(err));
+							.catch(error2 => {
+								reject(new Error(error2));
 							});
 					}
 				}
@@ -202,7 +202,7 @@ function saveVideoFile(gridNum, filePath, initialGrid, lastFile) {
 				if (configData.generateReport === true) {
 					args.push('-report');
 				}
-				let args2 = `-vframes 1 -q:v 2`;
+				let args2 = '-vframes 1 -q:v 2';
 				args2 = args2.split(' ');
 				args2.push(`${thumbnailPath}\\${path.parse(filePath).name}.jpg`);
 				args = args.concat(args2);
@@ -210,7 +210,7 @@ function saveVideoFile(gridNum, filePath, initialGrid, lastFile) {
 					if (error) {
 						mainWindow.webContents.send('notificationMsg', [{
 							type: 'error',
-							msg: `FFmpeg error (generating thumbnail)`,
+							msg: 'FFmpeg error (generating thumbnail)',
 							open: 'https://github.com/SavageCore/new-retro-arcade-neon-attract-screen-tool/issues',
 							log: error
 						}]);
@@ -218,8 +218,8 @@ function saveVideoFile(gridNum, filePath, initialGrid, lastFile) {
 					}
 					// Update videoFiles config
 					await parseConfig('set', 'videoFiles', videoFiles)
-						.catch(err => {
-							console.error(err);
+						.catch(error2 => {
+							console.error(error2);
 						});
 					if (lastFile) {
 						await getDetails(initialGrid);
@@ -232,8 +232,8 @@ function saveVideoFile(gridNum, filePath, initialGrid, lastFile) {
 
 exports.selectAttractScreenFile = async function () {
 	const gamePath = await getGamePath()
-		.catch(err => {
-			console.error(err);
+		.catch(error => {
+			console.error(error);
 			return false;
 		});
 	const options = {
@@ -259,19 +259,19 @@ exports.selectAttractScreenFile = async function () {
 					return;
 				}
 				const configData = await parseConfig('get', 'main', false)
-					.catch(err => {
-						console.error(err);
+					.catch(error2 => {
+						console.error(error2);
 					});
 				if (configData !== undefined) {
 					[configData.attractScreenPath] = response;
 					await parseConfig('set', 'main', configData)
-						.catch(err => {
-							console.error(err);
+						.catch(error2 => {
+							console.error(error2);
 						});
 					mainWindow.webContents.send('attractScreenSet', true);
 					mainWindow.webContents.send('notificationMsg', [{
 						type: 'success',
-						msg: `Attract Screen Set!`
+						msg: 'Attract Screen Set!'
 					}]);
 				}
 			});
@@ -285,23 +285,23 @@ exports.deleteVideo = async function (gridNum) {
 			type: 'question',
 			buttons: ['Yes', 'No'],
 			title: 'Confirm',
-			message: `Are you sure you want to delete?`
+			message: 'Are you sure you want to delete?'
 		});
 	if (choice === 0) {
 		const videoFiles = await parseConfig('get', 'videoFiles', false)
-			.catch(err => {
-				console.error(err);
+			.catch(error => {
+				console.error(error);
 			});
 		if (videoFiles) {
 			const thumbnailFilePath = videoFiles[gridNum].path;
 			delete videoFiles[gridNum];
 			await parseConfig('set', 'videoFiles', videoFiles)
-				.catch(err => {
-					console.error(err);
+				.catch(error => {
+					console.error(error);
 				});
 			const mainConfig = await parseConfig('get', 'main', false)
-				.catch(err => {
-					console.error(err);
+				.catch(error => {
+					console.error(error);
 				});
 			if (mainConfig.defaultVideoGridNum === gridNum) {
 				delete mainConfig.defaultVideoDuration;
@@ -309,8 +309,8 @@ exports.deleteVideo = async function (gridNum) {
 				delete mainConfig.defaultVideo;
 			}
 			await parseConfig('set', 'main', mainConfig)
-				.catch(err => {
-					console.error(err);
+				.catch(error => {
+					console.error(error);
 				});
 			await getDefaultVideo();
 			const filePath = `${app.getPath('userData')}\\thumbnails\\${path.parse(thumbnailFilePath).name}.jpg`;
@@ -334,8 +334,8 @@ exports.deleteVideo = async function (gridNum) {
 
 exports.renderVideo = async function () { // eslint-disable-line complexity
 	const configData = await parseConfig('get', 'main', false)
-		.catch(err => {
-			console.error(err);
+		.catch(error => {
+			console.error(error);
 		});
 	if (configData !== undefined) {
 		let {defaultVideo} = configData;
@@ -377,14 +377,14 @@ exports.renderVideo = async function () { // eslint-disable-line complexity
 			hwaccel = '-i';
 		}
 		const videoFiles = await parseConfig('get', 'videoFiles', false)
-			.catch(err => {
-				console.error(err);
+			.catch(error => {
+				console.error(error);
 			});
 		if (videoFiles[0] === undefined) {
 			mainWindow.webContents.send('render', ['end', true]);
 			mainWindow.webContents.send('notificationMsg', [{
 				type: 'error',
-				msg: `Grid 1 must be set - click to clear this message`
+				msg: 'Grid 1 must be set - click to clear this message'
 			}]);
 			return false;
 		}
@@ -442,8 +442,8 @@ exports.renderVideo = async function () { // eslint-disable-line complexity
 
 			// Extract Audio
 			const gamePath = await getGamePath()
-				.catch(err => {
-					console.error(err);
+				.catch(error => {
+					console.error(error);
 					return false;
 				});
 			const audioFilePath = `${gamePath}\\NewRetroArcade\\Content\\Arcades`;
@@ -458,7 +458,7 @@ exports.renderVideo = async function () { // eslint-disable-line complexity
 							if (generateReport === true) {
 								args.push('-report');
 							}
-							const argString = `-y -vn -q:a 0 -map a`.split(' ');
+							const argString = '-y -vn -q:a 0 -map a'.split(' ');
 							args = args.concat(argString);
 							args.push(`${audioFilePath}\\${path.parse(data[1]).name}.mp3`);
 							// Extract Audio
@@ -588,7 +588,7 @@ exports.renderVideo = async function () { // eslint-disable-line complexity
 							mainWindow.webContents.send('render', ['end']);
 							mainWindow.webContents.send('notificationMsg', [{
 								type: 'error',
-								msg: `Could not write to Attract Screen Path`,
+								msg: 'Could not write to Attract Screen Path',
 								delay: 6000,
 								log: err
 							}]);
@@ -610,22 +610,22 @@ exports.renderVideo = async function () { // eslint-disable-line complexity
 
 exports.defaultVideo = async function (gridNum) {
 	const videoFiles = await parseConfig('get', 'videoFiles', false)
-		.catch(err => {
-			console.error(err);
+		.catch(error => {
+			console.error(error);
 		});
 	let defaultVideo;
 	if (videoFiles[gridNum] !== undefined) {
 		defaultVideo = videoFiles[gridNum].path;
 	}
 	const mainConfig = await parseConfig('get', 'main', false)
-		.catch(err => {
-			console.error(err);
+		.catch(error => {
+			console.error(error);
 		});
 	mainConfig.defaultVideo = defaultVideo;
 	mainConfig.defaultVideoGridNum = gridNum;
 
 	const executablePath = ffprobe.path;
-	let args = `-v error -select_streams v:0 -of json -show_entries stream=width,height,duration`;
+	let args = '-v error -select_streams v:0 -of json -show_entries stream=width,height,duration';
 	args = args.split(' ');
 	args.push(defaultVideo);
 	let exec = require('child_process');
@@ -635,7 +635,7 @@ exports.defaultVideo = async function (gridNum) {
 		if (error) {
 			mainWindow.webContents.send('notificationMsg', [{
 				type: 'error',
-				msg: `FFprobe error (getting default video duration)`,
+				msg: 'FFprobe error (getting default video duration)',
 				open: 'https://github.com/SavageCore/new-retro-arcade-neon-attract-screen-tool/issues',
 				log: error
 			}]);
@@ -644,8 +644,8 @@ exports.defaultVideo = async function (gridNum) {
 		const output = JSON.parse(stdout);
 		mainConfig.defaultVideoDuration = output.streams[0].duration;
 		await parseConfig('set', 'main', mainConfig)
-			.catch(err => {
-				console.error(err);
+			.catch(error2 => {
+				console.error(error2);
 			});
 		await getDefaultVideo();
 	});
@@ -653,8 +653,8 @@ exports.defaultVideo = async function (gridNum) {
 
 exports.unsetDefaultVideo = async function (gridNum) {
 	const mainConfig = await parseConfig('get', 'main', false)
-		.catch(err => {
-			console.error(err);
+		.catch(error => {
+			console.error(error);
 		});
 	if (mainConfig.defaultVideoGridNum === gridNum) {
 		delete mainConfig.defaultVideoDuration;
@@ -662,8 +662,8 @@ exports.unsetDefaultVideo = async function (gridNum) {
 		delete mainConfig.defaultVideo;
 	}
 	await parseConfig('set', 'main', mainConfig)
-		.catch(err => {
-			console.error(err);
+		.catch(error => {
+			console.error(error);
 		});
 	await getDefaultVideo();
 };
@@ -694,25 +694,25 @@ exports.switchPage = async function (page) {
 
 exports.updateSettings = async function (settings) {
 	const mainConfig = await parseConfig('get', 'main', false)
-		.catch(err => {
-			console.error(err);
+		.catch(error => {
+			console.error(error);
 		});
 	if (mainConfig !== undefined) {
 		mainConfig[settings[0]] = settings[1]; // eslint-disable-line prefer-destructuring
 		await parseConfig('set', 'main', mainConfig)
-			.catch(err => {
-				console.error(err);
+			.catch(error => {
+				console.error(error);
 			});
 		if (settings[0] === 'attractScreenPath') {
 			mainWindow.webContents.send('attractScreenSet', true);
 			mainWindow.webContents.send('notificationMsg', [{
 				type: 'success',
-				msg: `Attract Screen Set!`
+				msg: 'Attract Screen Set!'
 			}]);
 		} else {
 			mainWindow.webContents.send('notificationMsg', [{
 				type: 'success',
-				msg: `Settings updated!`
+				msg: 'Settings updated!'
 			}]);
 		}
 	}
@@ -725,12 +725,12 @@ exports.quitApp = function () {
 exports.changeGrid = function (gridNum) {
 	return new Promise(async (resolve, reject) => {
 		await getDetails(gridNum)
-			.catch(err => {
-				reject(new Error(err));
+			.catch(error => {
+				reject(new Error(error));
 			});
 		await getDefaultVideo()
-			.catch(err => {
-				reject(new Error(err));
+			.catch(error => {
+				reject(new Error(error));
 			});
 		resolve(true);
 	});
@@ -739,8 +739,8 @@ exports.changeGrid = function (gridNum) {
 function getDefaultVideo() {
 	return new Promise(async (resolve, reject) => {
 		const mainConfig = await parseConfig('get', 'main', false)
-			.catch(err => {
-				reject(new Error(err));
+			.catch(error => {
+				reject(new Error(error));
 			});
 		if (mainConfig !== undefined) {
 			mainWindow.webContents.send('defaultVideo', mainConfig.defaultVideoGridNum);
@@ -753,8 +753,8 @@ function getDefaultVideo() {
 function getDetails(gridNum) {
 	return new Promise(async (resolve, reject) => {
 		let videoFiles = await parseConfig('get', 'videoFiles', false)
-			.catch(err => {
-				reject(new Error(err));
+			.catch(error => {
+				reject(new Error(error));
 				return false;
 			});
 		if (!videoFiles) {
@@ -800,7 +800,7 @@ function getDetails(gridNum) {
 				let execFile = require('child_process');
 
 				({execFile} = execFile);
-				let args = `-v error -select_streams v:0 -of json -show_entries format=filename:stream=duration,width,height,divx_packed,has_b_frames`;
+				let args = '-v error -select_streams v:0 -of json -show_entries format=filename:stream=duration,width,height,divx_packed,has_b_frames';
 				args = args.split(' ');
 				// Path may contain spaces so push to end of array separately to avoid split
 				args.push(filePath);
@@ -808,7 +808,7 @@ function getDetails(gridNum) {
 					if (error) {
 						mainWindow.webContents.send('notificationMsg', [{
 							type: 'error',
-							msg: `FFprobe error (get details)`,
+							msg: 'FFprobe error (get details)',
 							open: 'https://github.com/SavageCore/new-retro-arcade-neon-attract-screen-tool/issues',
 							log: error
 						}]);
@@ -826,13 +826,13 @@ function getDetails(gridNum) {
 exports.playVideo = async function (gridNum) {
 	// Get width and height of video for BrowserWindow
 	const videoFiles = await parseConfig('get', 'videoFiles', false)
-		.catch(err => {
-			console.error(err);
+		.catch(error => {
+			console.error(error);
 		});
 	let execFile = require('child_process');
 
 	({execFile} = execFile);
-	let args = `-v error -select_streams v:0 -of json -show_entries stream=width,height`;
+	let args = '-v error -select_streams v:0 -of json -show_entries stream=width,height';
 	args = args.split(' ');
 	// Path may contain spaces so push to end of array separately to avoid split
 	args.push(videoFiles[gridNum].path);
@@ -841,7 +841,7 @@ exports.playVideo = async function (gridNum) {
 			if (error) {
 				mainWindow.webContents.send('notificationMsg', [{
 					type: 'error',
-					msg: `FFprobe error (get video details for player)`,
+					msg: 'FFprobe error (get video details for player)',
 					open: 'https://github.com/SavageCore/new-retro-arcade-neon-attract-screen-tool/issues',
 					log: error
 				}]);
@@ -976,15 +976,15 @@ exports.editConfigINI = async function (state) {
 
 	({ConfigIniParser} = ConfigIniParser);
 	const gamePath = await getGamePath()
-		.catch(err => {
-			console.error(err);
+		.catch(error => {
+			console.error(error);
 			return false;
 		});
 	const delimiter = '\r\n';
 	const sectionName = '/Script/ArcadeRift.ArcadeGameUserSettings';
 	const parser = new ConfigIniParser(delimiter);
-	fs.access(`${gamePath}\\NewRetroArcade\\Saved\\Config\\WindowsNoEditor\\GameUserSettings.ini`, fs.constants.R_OK | fs.constants.W_OK, err => {
-		if (err) {
+	fs.access(`${gamePath}\\NewRetroArcade\\Saved\\Config\\WindowsNoEditor\\GameUserSettings.ini`, fs.constants.R_OK | fs.constants.W_OK, error => {
+		if (error) {
 			return;
 		}
 		parser.parse(fs.readFileSync(`${gamePath}\\NewRetroArcade\\Saved\\Config\\WindowsNoEditor\\GameUserSettings.ini`, 'utf-8'));
@@ -1032,12 +1032,12 @@ function updateChecker() {
 			'User-Agent': 'new-retro-arcade-neon-attract-screen-tool'
 		}
 	};
-	request(options, (err, response, body) => {
-		if (err) {
+	request(options, (error, response, body) => {
+		if (error) {
 			mainWindow.webContents.send('notificationMsg', [{
 				type: 'error',
-				msg: `Update Check: Error - please see log`,
-				log: err.toString()
+				msg: 'Update Check: Error - please see log',
+				log: error.toString()
 			}]);
 			return false;
 		}
@@ -1046,21 +1046,21 @@ function updateChecker() {
 			// Newer release
 			mainWindow.webContents.send('notificationMsg', [{
 				type: 'success',
-				msg: `Update available! Click to download`,
+				msg: 'Update available! Click to download',
 				open: release.html_url
 			}]);
 		} else if (semver.diff(release.tag_name, app.getVersion()) === null) {
 			// Current
 			mainWindow.webContents.send('notificationMsg', [{
 				type: 'info',
-				msg: `You have the latest version`,
+				msg: 'You have the latest version',
 				delay: 3000
 			}]);
 		} else {
 			// Unknown
 			mainWindow.webContents.send('notificationMsg', [{
 				type: 'error',
-				msg: `Unknown! Click to download latest`,
+				msg: 'Unknown! Click to download latest',
 				open: release.html_url
 			}]);
 		}
@@ -1071,7 +1071,7 @@ function videoContainsAudio(videoPath, gridNum, callback) {
 	let args = [];
 	args.push('-i');
 	args.push(videoPath);
-	const argString = `-show_streams -select_streams a -loglevel error -of json`.split(' ');
+	const argString = '-show_streams -select_streams a -loglevel error -of json'.split(' ');
 	args = args.concat(argString);
 	let execFile = require('child_process');
 
@@ -1099,8 +1099,8 @@ function videoContainsAudio(videoPath, gridNum, callback) {
 exports.sortableList = function () {
 	return new Promise(async (resolve, reject) => {
 		const videoFiles = await parseConfig('get', 'videoFiles', false)
-			.catch(err => {
-				reject(new Error(err));
+			.catch(error => {
+				reject(new Error(error));
 			});
 		resolve(videoFiles);
 	});
@@ -1162,23 +1162,23 @@ exports.updateXML = function () {
 		xw.startElement('ArcadeMachines');
 		mainWindow.webContents.executeJavaScript('$(\'#grey_back\').click()');
 		const gamePath = await getGamePath()
-			.catch(err => {
-				reject(new Error(err));
+			.catch(error => {
+				reject(new Error(error));
 				return false;
 			});
 		fs.access(`${gamePath}\\NewRetroArcade\\Content\\ArcadeMachines.xml`, fs.constants.R_OK | fs.constants.W_OK, async err => {
 			if (err) {
 				mainWindow.webContents.send('notificationMsg', [{
 					type: 'warning',
-					msg: `Unable to read/write ArcadeMachines.xml`,
+					msg: 'Unable to read/write ArcadeMachines.xml',
 					log: `Unable to read/write: ${gamePath}\\NewRetroArcade\\Content\\ArcadeMachines.xml`
 				}]);
 				reject(new Error(`Unable to read/write: ${gamePath}\\NewRetroArcade\\Content\\ArcadeMachines.xml`));
 				return false;
 			}
 			const videoFiles = await parseConfig('get', 'videoFiles', false)
-				.catch(err => {
-					reject(new Error(err));
+				.catch(error => {
+					reject(new Error(error));
 					return false;
 				});
 			const xmlPath = `${gamePath}\\NewRetroArcade\\Content\\ArcadeMachines.xml`;
@@ -1188,7 +1188,7 @@ exports.updateXML = function () {
 					explicitArray: false,
 					mergeAttrs: true
 				}))
-				.on('data', async data => { // eslint-disable-line complexity
+				.on('data', async data => { // eslint-disable-line complexity, require-await
 					for (const key in data) {
 						if ({}.hasOwnProperty.call(data, key)) {
 							xw.startElement(key);
@@ -1294,7 +1294,7 @@ exports.updateXML = function () {
 						if (error) {
 							mainWindow.webContents.send('notificationMsg', [{
 								type: 'error',
-								msg: `Could not write config`,
+								msg: 'Could not write config',
 								open: 'https://github.com/SavageCore/new-retro-arcade-neon-attract-screen-tool/issues',
 								log: error
 							}]);
@@ -1303,7 +1303,7 @@ exports.updateXML = function () {
 						}
 						mainWindow.webContents.send('notificationMsg', [{
 							type: 'success',
-							msg: `Config saved!`
+							msg: 'Config saved!'
 						}]);
 						resolve(true);
 					});
@@ -1314,12 +1314,12 @@ exports.updateXML = function () {
 
 exports.attractVolume = async function (gridNum, value) {
 	const videoFiles = await parseConfig('get', 'videoFiles', false)
-		.catch(err => {
-			console.error(err);
+		.catch(error => {
+			console.error(error);
 		});
 	videoFiles[gridNum].attractVolume = Number(value);
 	await parseConfig('set', 'videoFiles', videoFiles)
-		.catch(err => {
-			console.error(err);
+		.catch(error => {
+			console.error(error);
 		});
 };

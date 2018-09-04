@@ -12,8 +12,8 @@ require('pkginfo')(module, 'version');
 
 $(document).ready(async () => {
 	const menuItems = await mainProcess.menuItems()
-		.catch(err => {
-			console.error(err);
+		.catch(error => {
+			console.error(error);
 		});
 	for (let i = 0; i < menuItems.length; i++) {
 		$('#menu_smartphone ul').append(`<li id="menu_${menuItems[i].id}"><span class="glyphicon glyphicon-${menuItems[i].glyphicon}"></span>&nbsp;${menuItems[i].name}</li>`);

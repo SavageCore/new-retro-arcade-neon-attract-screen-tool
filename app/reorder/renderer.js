@@ -13,20 +13,20 @@ require('pkginfo')(module, 'version');
 
 $(document).ready(async () => {
 	const menuItems = await mainProcess.menuItems()
-		.catch(err => {
-			console.error(err);
+		.catch(error => {
+			console.error(error);
 		});
 	for (let i = 0; i < menuItems.length; i++) {
 		$('#menu_smartphone ul').append(`<li id="menu_${menuItems[i].id}"><span class="glyphicon glyphicon-${menuItems[i].glyphicon}"></span>&nbsp;${menuItems[i].name}</li>`);
 	}
 	require('../menu'); // eslint-disable-line  import/no-unassigned-import
 	const videoFiles = await mainProcess.sortableList()
-		.catch(err => {
-			console.error(err);
+		.catch(error => {
+			console.error(error);
 		});
 	const mainConfig = await mainProcess.parseConfigRenderer('get', 'main', false)
-		.catch(err => {
-			console.error(err);
+		.catch(error => {
+			console.error(error);
 		});
 	let length;
 	if (mainConfig.extraCabinets === true) {
@@ -53,8 +53,8 @@ Sortable.create(el, {
 
 async function switchGridPosition(from, to) {
 	const videoFiles = await mainProcess.parseConfigRenderer('get', 'videoFiles', false)
-		.catch(err => {
-			console.error(err);
+		.catch(error => {
+			console.error(error);
 		});
 	let videoFilesTmp = {};
 	let videoFilesArr = [];
@@ -69,13 +69,13 @@ async function switchGridPosition(from, to) {
 	}, {});
 	// Save to config
 	await mainProcess.parseConfigRenderer('set', 'videoFiles', videoFilesTmp)
-		.catch(err => {
-			console.error(err);
+		.catch(error => {
+			console.error(error);
 		});
 	// Check if reordering default video and update mainConfig with new gridnum
 	const configData = await mainProcess.parseConfigRenderer('get', 'main', false)
-		.catch(err => {
-			console.error(err);
+		.catch(error => {
+			console.error(error);
 		});
 	if (configData !== undefined) {
 		if (configData.defaultVideoGridNum === from) {

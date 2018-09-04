@@ -46,8 +46,8 @@ $(document).ready(() => {
 
 	$('#menu_save').click(() => {
 		mainProcess.updateXML()
-			.catch(err => {
-				console.error(err);
+			.catch(error => {
+				console.error(error);
 			});
 	});
 
