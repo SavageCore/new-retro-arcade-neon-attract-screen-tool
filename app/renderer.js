@@ -15,8 +15,8 @@ const notification = require('./notification');
 
 $(document).ready(async () => {
 	const mainConfig = await mainProcess.parseConfigRenderer('get', 'main', false)
-		.catch(err => {
-			console.error(err);
+		.catch(error => {
+			console.error(error);
 		});
 	if (mainConfig.extraCabinets === true) {
 		totalVideos = 35;
@@ -24,8 +24,8 @@ $(document).ready(async () => {
 		totalVideos = 30;
 	}
 	const menuItems = await mainProcess.menuItems()
-		.catch(err => {
-			console.error(err);
+		.catch(error => {
+			console.error(error);
 		});
 	for (let i = 0; i < menuItems.length; i++) {
 		$('#menu_smartphone ul').append(`<li id="menu_${menuItems[i].id}"><span class="glyphicon glyphicon-${menuItems[i].glyphicon}"></span>&nbsp;${menuItems[i].name}</li>`);
@@ -69,8 +69,8 @@ $(document).ready(async () => {
 	$('#navbar_page select').change(function () {
 		$('#attract_screen').data('gridnum', $(this).val());
 		mainProcess.changeGrid($('#attract_screen').data('gridnum') - 1)
-			.catch(err => {
-				console.error(err);
+			.catch(error => {
+				console.error(error);
 			});
 		$('#navbar_page select option').each(function () {
 			if ($(this).val() === $('#attract_screen').data('gridnum')) {
@@ -124,7 +124,7 @@ $('#details').click(() => {
 });
 
 ipcRenderer.on('thumbnailImage', (event, data) => {
-	document.getElementById(`attract_screen_img`).src = `${data[0]}?${new Date().getTime()}`;
+	document.getElementById('attract_screen_img').src = `${data[0]}?${new Date().getTime()}`;
 });
 
 ipcRenderer.on('defaultVideo', (event, data) => {
@@ -208,8 +208,8 @@ function navbarPrevPage() {
 	}
 	$('#attract_screen').data('gridnum', prevGrid);
 	mainProcess.changeGrid(prevGrid - 1)
-		.catch(err => {
-			console.error(err);
+		.catch(error => {
+			console.error(error);
 		});
 	$('#navbar_page select option').each(function () {
 		if (Number($(this).val()) === Number($('#attract_screen').data('gridnum'))) {
@@ -228,8 +228,8 @@ function navbarNextPage() {
 	}
 	$('#attract_screen').data('gridnum', nextGrid);
 	mainProcess.changeGrid(nextGrid - 1)
-		.catch(err => {
-			console.error(err);
+		.catch(error => {
+			console.error(error);
 			return false;
 		});
 	$('#navbar_page select option').each(function () {
