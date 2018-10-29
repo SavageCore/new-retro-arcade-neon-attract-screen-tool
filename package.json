@@ -25,7 +25,7 @@
   "homepage": "https://github.com/SavageCore/new-retro-arcade-neon-attract-screen-tool#readme",
   "devDependencies": {
     "electron": "^3.0.6",
-    "stylelint": "^9.5.0",
+    "stylelint": "^9.7.0",
     "stylelint-config-standard": "^18.2.0",
     "xo": "^0.23.0"
   },
