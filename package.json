@@ -30,7 +30,7 @@
     "xo": "^0.23.0"
   },
   "dependencies": {
-    "@ffmpeg-installer/ffmpeg": "^1.0.16",
+    "@ffmpeg-installer/ffmpeg": "^1.0.17",
     "@ffprobe-installer/ffprobe": "^1.0.9",
     "config-ini-parser": "^1.2.0",
     "electron-download": "^4.1.1",
