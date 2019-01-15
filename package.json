@@ -51,7 +51,7 @@
     "progress-stream": "^2.0.0",
     "request": "^2.88.0",
     "semver": "^5.6.0",
-    "sortablejs": "^1.7.0",
+    "sortablejs": "^1.8.0",
     "speedometer": "^1.1.0",
     "sumchecker": "^2.0.2",
     "throttleit": "^1.0.0",
