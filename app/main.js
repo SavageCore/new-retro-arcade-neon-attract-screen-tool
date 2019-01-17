@@ -40,6 +40,7 @@ app.on('ready', async () => {
 	} else {
 		createWindow(mainWindow, `file://${__dirname}/index.html`);
 	}
+
 	mainWindow.webContents.on('did-finish-load', async () => {
 		await getDetails(0);
 		await getDefaultVideo();
@@ -90,6 +91,7 @@ exports.selectVideoFile = function (gridNum) {
 			} else {
 				totalVideos = 30;
 			}
+
 			// If more than totalVideos returned spliced array
 			if (response.length > totalVideos) {
 				response.splice(totalVideos, response.length - totalVideos);
@@ -105,9 +107,11 @@ exports.selectVideoFile = function (gridNum) {
 				if (i === response.length - 1 || response.length === 1) {
 					lastFile = true;
 				}
+
 				if (lastFile) {
 					mainWindow.webContents.executeJavaScript('$(".block-overlay").remove();');
 				}
+
 				// Run function
 				saveVideoFile(gridNum, response[i], initialGrid, lastFile)
 					.catch(error => {
@@ -141,6 +145,7 @@ function saveVideoFile(gridNum, filePath, initialGrid, lastFile) {
 				}]);
 				reject(new Error(`Could not read file: ${filePath}`));
 			}
+
 			let videoFiles = await parseConfig('get', 'videoFiles', false)
 				.catch(error2 => {
 					reject(new Error(error2));
@@ -148,6 +153,7 @@ function saveVideoFile(gridNum, filePath, initialGrid, lastFile) {
 			if (!videoFiles) {
 				videoFiles = {};
 			}
+
 			// Get video duration
 			let args = '-v error -select_streams v:0 -of json -show_entries stream=duration';
 			args = args.split(' ');
@@ -165,6 +171,7 @@ function saveVideoFile(gridNum, filePath, initialGrid, lastFile) {
 					}]);
 					reject(new Error('FFprobe error (getting video duration)'));
 				}
+
 				const output = JSON.parse(stdout);
 				const fileDuration = output.streams[0].duration;
 				videoFiles[gridNum] = {};
@@ -202,6 +209,7 @@ function saveVideoFile(gridNum, filePath, initialGrid, lastFile) {
 				if (configData.generateReport === true) {
 					args.push('-report');
 				}
+
 				let args2 = '-vframes 1 -q:v 2';
 				args2 = args2.split(' ');
 				args2.push(`${thumbnailPath}\\${path.parse(filePath).name}.jpg`);
@@ -216,6 +224,7 @@ function saveVideoFile(gridNum, filePath, initialGrid, lastFile) {
 						}]);
 						return;
 					}
+
 					// Update videoFiles config
 					await parseConfig('set', 'videoFiles', videoFiles)
 						.catch(error2 => {
@@ -246,6 +255,7 @@ exports.selectAttractScreenFile = async function () {
 	if (gamePath) {
 		options.defaultPath = `${gamePath}\\NewRetroArcade\\Content\\Movies`;
 	}
+
 	dialog.showOpenDialog(mainWindow, options, response => {
 		if (response !== undefined) {
 			fs.access(response[0], fs.constants.R_OK, async error => {
@@ -258,6 +268,7 @@ exports.selectAttractScreenFile = async function () {
 					}]);
 					return;
 				}
+
 				const configData = await parseConfig('get', 'main', false)
 					.catch(error2 => {
 						console.error(error2);
@@ -308,6 +319,7 @@ exports.deleteVideo = async function (gridNum) {
 				delete mainConfig.defaultVideoGridNum;
 				delete mainConfig.defaultVideo;
 			}
+
 			await parseConfig('set', 'main', mainConfig)
 				.catch(error => {
 					console.error(error);
@@ -324,6 +336,7 @@ exports.deleteVideo = async function (gridNum) {
 					}]);
 					return;
 				}
+
 				fs.unlink(filePath);
 				mainWindow.webContents.send('thumbnailImage', ['media\\blank.png']);
 				await getDetails(gridNum);
@@ -348,11 +361,13 @@ exports.renderVideo = async function () { // eslint-disable-line complexity
 		} else {
 			({renderScale} = configData);
 		}
+
 		if (configData.extraCabinets === true) {
 			totalVideos = 35;
 		} else {
 			totalVideos = 30;
 		}
+
 		const {muteAudio} = configData;
 		const {generateReport} = configData;
 		let encoder;
@@ -370,12 +385,14 @@ exports.renderVideo = async function () { // eslint-disable-line complexity
 					encoder = 'libx264';
 			}
 		}
+
 		let hwaccel;
 		if (configData.hwaccel === true) {
 			hwaccel = '-hwaccel auto -i';
 		} else {
 			hwaccel = '-i';
 		}
+
 		const videoFiles = await parseConfig('get', 'videoFiles', false)
 			.catch(error => {
 				console.error(error);
@@ -388,16 +405,19 @@ exports.renderVideo = async function () { // eslint-disable-line complexity
 			}]);
 			return false;
 		}
+
 		if (videoFiles !== undefined) {
 			if (Object.keys(videoFiles).length < totalVideos) {
 				// If no default video set use first videoFiles
 				if (defaultVideo === undefined) {
 					defaultVideo = videoFiles[0].path;
 				}
+
 				if (defaultVideoDuration === undefined) {
 					defaultVideoDuration = videoFiles[0].duration;
 				}
 			}
+
 			// Set totalTile to longest videoFiles
 			const videoDurations = [];
 			for (const prop in videoFiles) {
@@ -405,17 +425,19 @@ exports.renderVideo = async function () { // eslint-disable-line complexity
 					videoDurations.push(videoFiles[prop].duration);
 				}
 			}
+
 			const videoDurationsSorted = [];
 			for (const duration in videoDurations) {
 				if ({}.hasOwnProperty.call(videoDurations, duration)) {
 					videoDurationsSorted.push([duration, videoDurations[duration]]);
 				}
 			}
+
 			videoDurationsSorted.sort((a, b) => {
 				return a[1] - b[1];
 			});
 			// Cannot sort descending so select last item in object
-			let totalTime = videoDurationsSorted[Object.keys(videoFiles).length - 1][1]; // eslint-disable-line prefer-destructuring
+			let totalTime = videoDurationsSorted[Object.keys(videoFiles).length - 1][1];
 
 			if ((configData.maxDuration !== undefined && configData.maxDuration !== false) && configData.maxDuration <= totalTime) {
 				totalTime = configData.maxDuration;
@@ -430,12 +452,14 @@ exports.renderVideo = async function () { // eslint-disable-line complexity
 					for (let ii = 0; ii < divison; ii++) { // eslint-disable-line max-depth
 						listFileLine += `file '${defaultVideo}'\r\n`;
 					}
+
 					fs.writeFileSync(`${app.getPath('temp')}\\${i}list.txt`, listFileLine);
 				} else {
 					divison = Math.ceil(totalTime / videoFiles[i].duration);
 					for (let ii = 0; ii < divison; ii++) { // eslint-disable-line max-depth
 						listFileLine += `file '${videoFiles[i].path}'\r\n`;
 					}
+
 					fs.writeFileSync(`${app.getPath('temp')}\\${i}list.txt`, listFileLine);
 				}
 			}
@@ -450,7 +474,7 @@ exports.renderVideo = async function () { // eslint-disable-line complexity
 			for (let i = 0; i < totalVideos; i++) {
 				if (videoFiles[i] !== undefined) {
 					// Does video contain audio stream
-					videoContainsAudio(videoFiles[i].path, i, data => { // eslint-disable-line no-loop-func
+					videoContainsAudio(videoFiles[i].path, i, data => {
 						if (data[0] === true) {
 							let args = [];
 							args.push('-i');
@@ -458,6 +482,7 @@ exports.renderVideo = async function () { // eslint-disable-line complexity
 							if (generateReport === true) {
 								args.push('-report');
 							}
+
 							const argString = '-y -vn -q:a 0 -map a'.split(' ');
 							args = args.concat(argString);
 							args.push(`${audioFilePath}\\${path.parse(data[1]).name}.mp3`);
@@ -492,6 +517,7 @@ exports.renderVideo = async function () { // eslint-disable-line complexity
 				listCommand += ` -f concat -safe 0 ${hwaccel} ${app.getPath('temp')}\\${i}list.txt`;
 				scaleCommand += ` [${i}:v]scale=${renderScale} [tmp${i}];`;
 			}
+
 			args = listCommand.trim().split(' ');
 
 			args.push('-filter_complex');
@@ -503,6 +529,7 @@ exports.renderVideo = async function () { // eslint-disable-line complexity
 					hstackCommand += `hstack=inputs=5[row${rowCount++}]; `;
 				}
 			}
+
 			execCommandTmp += hstackCommand;
 			for (let i = 0; i < rowCount; i++) {
 				rowCommand += `[row${i}]`;
@@ -510,11 +537,13 @@ exports.renderVideo = async function () { // eslint-disable-line complexity
 					rowCommand += ` vstack=inputs=${rowCount}`;
 				}
 			}
+
 			execCommandTmp += ` ${rowCommand}`;
 			args.push(execCommandTmp.trim());
 			if (generateReport === true) {
 				args.push('-report');
 			}
+
 			args.push('-t');
 			args.push(totalTime);
 			args.push('-an');
@@ -544,6 +573,7 @@ exports.renderVideo = async function () { // eslint-disable-line complexity
 					if (hh !== undefined) {
 						elaspedTimeSecs += hh * 60 * 60;
 					}
+
 					const progress = elaspedTimeSecs / totalTime;
 					mainWindow.webContents.send('renderProgress', [elaspedTimeSecs, progress]);
 				}
@@ -564,18 +594,21 @@ exports.renderVideo = async function () { // eslint-disable-line complexity
 				for (let i = 0; i < totalVideos; i++) {
 					fs.unlinkSync(`${app.getPath('temp')}\\${i}list.txt`);
 				}
+
 				if (code === 0) {
 					if (elaspedTimeSecs !== null) {
 						const minutes = Math.floor(elaspedTimeSecs / 60);
 						const seconds = elaspedTimeSecs % 60;
 						finalTime = strPadLeft(minutes, '0', 2) + ':' + strPadLeft(seconds, '0', 2);
 					}
+
 					if (!muteAudio) {
 						mainWindow.webContents.executeJavaScript(`
 									var audio = new Audio('media/success.ogg');
 									audio.play();
 								`);
 					}
+
 					mainWindow.webContents.send('render', ['end']);
 					mainWindow.webContents.send('notificationMsg', [{
 						type: 'success',
@@ -617,6 +650,7 @@ exports.defaultVideo = async function (gridNum) {
 	if (videoFiles[gridNum] !== undefined) {
 		defaultVideo = videoFiles[gridNum].path;
 	}
+
 	const mainConfig = await parseConfig('get', 'main', false)
 		.catch(error => {
 			console.error(error);
@@ -641,6 +675,7 @@ exports.defaultVideo = async function (gridNum) {
 			}]);
 			return;
 		}
+
 		const output = JSON.parse(stdout);
 		mainConfig.defaultVideoDuration = output.streams[0].duration;
 		await parseConfig('set', 'main', mainConfig)
@@ -661,6 +696,7 @@ exports.unsetDefaultVideo = async function (gridNum) {
 		delete mainConfig.defaultVideoGridNum;
 		delete mainConfig.defaultVideo;
 	}
+
 	await parseConfig('set', 'main', mainConfig)
 		.catch(error => {
 			console.error(error);
@@ -698,7 +734,7 @@ exports.updateSettings = async function (settings) {
 			console.error(error);
 		});
 	if (mainConfig !== undefined) {
-		mainConfig[settings[0]] = settings[1]; // eslint-disable-line prefer-destructuring
+		mainConfig[settings[0]] = settings[1];
 		await parseConfig('set', 'main', mainConfig)
 			.catch(error => {
 				console.error(error);
@@ -746,6 +782,7 @@ function getDefaultVideo() {
 			mainWindow.webContents.send('defaultVideo', mainConfig.defaultVideoGridNum);
 			resolve(true);
 		}
+
 		reject(new Error('Unable to find default video grid number'));
 	});
 }
@@ -760,6 +797,7 @@ function getDetails(gridNum) {
 		if (!videoFiles) {
 			videoFiles = {};
 		}
+
 		if (Object.keys(videoFiles).length === 0) {
 			mainWindow.webContents.send('thumbnailImage', ['media\\blank.png']);
 			mainWindow.webContents.send('gridDetails', [false, '']);
@@ -767,6 +805,7 @@ function getDetails(gridNum) {
 			reject(new Error('No videos set'));
 			return false;
 		}
+
 		if (videoFiles[gridNum] === undefined) {
 			mainWindow.webContents.send('thumbnailImage', ['media\\blank.png']);
 			mainWindow.webContents.send('gridDetails', [false, '']);
@@ -774,6 +813,7 @@ function getDetails(gridNum) {
 			reject(new Error('Video not set'));
 			return false;
 		}
+
 		const thumbnailPath = `${app.getPath('userData')}\\thumbnails`;
 		const fullPath = `${thumbnailPath}\\${path.parse(videoFiles[gridNum].path).name}.jpg`;
 		const thumbnailImagePath = fullPath;
@@ -814,6 +854,7 @@ function getDetails(gridNum) {
 						}]);
 						reject(new Error(err));
 					}
+
 					const output = JSON.parse(stdout);
 					mainWindow.webContents.send('gridDetails', [filename, output.streams[0].duration, output.streams[0].width, output.streams[0].height, filePath, videoFiles[gridNum].attractVolume]);
 					resolve(true);
@@ -847,6 +888,7 @@ exports.playVideo = async function (gridNum) {
 				}]);
 				return;
 			}
+
 			const output = JSON.parse(stdout);
 
 			const videoWindow = new BrowserWindow({
@@ -885,6 +927,7 @@ function parseConfig(action, configFile, configData) {
 						}]);
 						reject(new Error(`Could not read from config (${configFile})`));
 					}
+
 					resolve(data);
 				});
 				break;
@@ -899,6 +942,7 @@ function parseConfig(action, configFile, configData) {
 						}]);
 						reject(new Error(`Could not write to config (${configFile})`));
 					}
+
 					resolve(true);
 				});
 				break;
@@ -942,6 +986,7 @@ exports.availableEncoders = function () {
 				}
 			}
 		}
+
 		resolve(availableEncoders);
 	});
 };
@@ -965,6 +1010,7 @@ function getGamePath() {
 						resolve(items[i].value);
 					}
 				}
+
 				reject(new Error('Registry key found, could not find InstallLocation'));
 			}
 		});
@@ -987,12 +1033,14 @@ exports.editConfigINI = async function (state) {
 		if (error) {
 			return;
 		}
+
 		parser.parse(fs.readFileSync(`${gamePath}\\NewRetroArcade\\Saved\\Config\\WindowsNoEditor\\GameUserSettings.ini`, 'utf-8'));
 		if (parser.isHaveSection(sectionName)) {
 			// Set AttractMovie if missing
 			if (parser.isHaveOption(sectionName, 'AttractMovie') === false) {
 				parser.set(sectionName, 'AttractMovie', 'AttractScreens.mp4');
 			}
+
 			switch (state) {
 				case true:
 					// Invalid ini file? Anyway select with strange option name and set 7 rows
@@ -1002,6 +1050,7 @@ exports.editConfigINI = async function (state) {
 					} else {
 						parser.set(sectionName, 'AttractMovieLayout', '(X=5.000000,Y=7.000000)');
 					}
+
 					break;
 				case false:
 					// Revert to defaults
@@ -1011,10 +1060,12 @@ exports.editConfigINI = async function (state) {
 					} else {
 						parser.set(sectionName, 'AttractMovieLayout', '(X=5.000000,Y=6.000000)');
 					}
+
 					break;
 				default:
 					break;
 			}
+
 			// Relace new line at start of file
 			const config = parser.stringify(delimiter).replace(/^\r\n|\n/, '');
 			fs.writeFileSync(`${gamePath}\\NewRetroArcade\\Saved\\Config\\WindowsNoEditor\\GameUserSettings.ini`, config);
@@ -1041,6 +1092,7 @@ function updateChecker() {
 			}]);
 			return false;
 		}
+
 		const release = JSON.parse(body);
 		if (semver.gt(release.tag_name, app.getVersion()) === true) {
 			// Newer release
@@ -1086,6 +1138,7 @@ function videoContainsAudio(videoPath, gridNum, callback) {
 			}]);
 			callback([false, videoPath]);
 		}
+
 		output = JSON.parse(stdout);
 		// Var hasBarProperty = {}.hasOwnProperty.call(foo, "bar");
 		if (typeof output.streams[0] !== 'undefined' && {}.hasOwnProperty.call(output.streams[0], 'index')) {
@@ -1152,6 +1205,7 @@ function searchInObj(s, obj) {
 			}
 		}
 	}
+
 	return matches;
 }
 
@@ -1176,6 +1230,7 @@ exports.updateXML = function () {
 				reject(new Error(`Unable to read/write: ${gamePath}\\NewRetroArcade\\Content\\ArcadeMachines.xml`));
 				return false;
 			}
+
 			const videoFiles = await parseConfig('get', 'videoFiles', false)
 				.catch(error => {
 					reject(new Error(error));
@@ -1188,7 +1243,7 @@ exports.updateXML = function () {
 					explicitArray: false,
 					mergeAttrs: true
 				}))
-				.on('data', async data => { // eslint-disable-line complexity, require-await
+				.on('data', async data => { // eslint-disable-line complexity
 					for (const key in data) {
 						if ({}.hasOwnProperty.call(data, key)) {
 							xw.startElement(key);
@@ -1197,16 +1252,19 @@ exports.updateXML = function () {
 								xw.text(data[key].Game);
 								xw.endElement();
 							}
+
 							if (typeof data[key].Core !== 'undefined') {
 								xw.startElement('Core');
 								xw.text(data[key].Core);
 								xw.endElement();
 							}
+
 							if (typeof data[key].GameVolume !== 'undefined') {
 								xw.startElement('GameVolume');
 								xw.text(data[key].GameVolume);
 								xw.endElement();
 							}
+
 							if (typeof data[key].Game !== 'undefined') {
 								const matches = searchInObj(`${path.parse(data[key].Game).name}.`, videoFiles);
 								if (matches.length > 0) {
@@ -1218,6 +1276,7 @@ exports.updateXML = function () {
 									xw.text(data[key].GameImage);
 									xw.endElement();
 								}
+
 								if (matches.length > 0) {
 									xw.startElement('GameMusic');
 									xw.text(`${path.parse(videoFiles[matches[0]].path).name}.mp3`);
@@ -1227,11 +1286,13 @@ exports.updateXML = function () {
 									xw.text(data[key].GameMusic);
 									xw.endElement();
 								}
+
 								if (matches.length > 0 && typeof videoFiles[matches[0]].attractVolume !== 'undefined') {
 									let volume = videoFiles[matches[0]].attractVolume;
 									if (videoFiles[matches[0]].attractVolume === 0) {
 										volume = '0.0';
 									}
+
 									xw.startElement('GameMusicVolume');
 									xw.text(volume);
 									xw.endElement();
@@ -1249,16 +1310,19 @@ exports.updateXML = function () {
 								xw.text(data[key].GameMusicVolume);
 								xw.endElement();
 							}
+
 							if (typeof data[key].ScreenType !== 'undefined') {
 								xw.startElement('ScreenType');
 								xw.text(data[key].ScreenType);
 								xw.endElement();
 							}
+
 							if (typeof data[key].ButtonLayout !== 'undefined') {
 								xw.startElement('ButtonLayout');
 								xw.text(data[key].ButtonLayout);
 								xw.endElement();
 							}
+
 							if (typeof data[key].ButtonColour !== 'undefined') {
 								xw.startElement('ButtonColour');
 								xw.writeAttribute('AB', data[key].ButtonColour.AB);
@@ -1266,6 +1330,7 @@ exports.updateXML = function () {
 								xw.writeAttribute('SS', data[key].ButtonColour.SS);
 								xw.endElement();
 							}
+
 							if (typeof data[key].ArtFrontPanel !== 'undefined') {
 								xw.startElement('ArtFrontPanel');
 								if (typeof data[key].ArtFrontPanel.Colour !== 'undefined') {
@@ -1273,8 +1338,10 @@ exports.updateXML = function () {
 								} else if (typeof data[key].ArtFrontPanel.Texture !== 'undefined') {
 									xw.writeAttribute('Texture', data[key].ArtFrontPanel.Texture);
 								}
+
 								xw.endElement();
 							}
+
 							if (typeof data[key].ArtSidePanel !== 'undefined') {
 								xw.startElement('ArtSidePanel');
 								if (typeof data[key].ArtSidePanel.Colour !== 'undefined') {
@@ -1282,11 +1349,14 @@ exports.updateXML = function () {
 								} else if (typeof data[key].ArtSidePanel.Texture !== 'undefined') {
 									xw.writeAttribute('Texture', data[key].ArtSidePanel.Texture);
 								}
+
 								xw.endElement();
 							}
+
 							xw.endElement();
 						}
 					}
+
 					xw.endDocument();
 					fs.writeFile(`${gamePath}\\NewRetroArcade\\Content\\ArcadeMachines.xml`, eol.crlf(xmlfmt(xw.toString())), {
 						encoding: 'utf-8'
@@ -1301,6 +1371,7 @@ exports.updateXML = function () {
 							reject(new Error(`Could not write to: ${gamePath}\\NewRetroArcade\\Content\\ArcadeMachines.xml`));
 							return false;
 						}
+
 						mainWindow.webContents.send('notificationMsg', [{
 							type: 'success',
 							msg: 'Config saved!'

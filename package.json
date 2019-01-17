@@ -67,8 +67,8 @@
         1,
         10
       ],
-			"block-scoped-var": 0,
-			"no-async-promise-executor": 0
+      "block-scoped-var": 0,
+      "no-async-promise-executor": 0
     },
     "prettifier": true
   }

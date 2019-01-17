@@ -18,6 +18,7 @@ $(document).ready(async () => {
 	for (let i = 0; i < menuItems.length; i++) {
 		$('#menu_smartphone ul').append(`<li id="menu_${menuItems[i].id}"><span class="glyphicon glyphicon-${menuItems[i].glyphicon}"></span>&nbsp;${menuItems[i].name}</li>`);
 	}
+
 	require('../menu'); // eslint-disable-line  import/no-unassigned-import
 	$('.bottom-bar').addClass('bottom-bar-info');
 	$('.bottom-bar').html(`Version: ${module.exports.version}`);

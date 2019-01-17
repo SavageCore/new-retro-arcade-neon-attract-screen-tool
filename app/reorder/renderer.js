@@ -19,6 +19,7 @@ $(document).ready(async () => {
 	for (let i = 0; i < menuItems.length; i++) {
 		$('#menu_smartphone ul').append(`<li id="menu_${menuItems[i].id}"><span class="glyphicon glyphicon-${menuItems[i].glyphicon}"></span>&nbsp;${menuItems[i].name}</li>`);
 	}
+
 	require('../menu'); // eslint-disable-line  import/no-unassigned-import
 	const videoFiles = await mainProcess.sortableList()
 		.catch(error => {
@@ -34,6 +35,7 @@ $(document).ready(async () => {
 	} else {
 		length = 30;
 	}
+
 	for (let i = 0; i < length; i++) {
 		if (videoFiles[i]) {
 			$('#videoFiles').append(`<li class="list-group-item"><span class="badge">${i + 1}</span>${path.basename(videoFiles[i].path)}</li>`);
@@ -44,7 +46,7 @@ $(document).ready(async () => {
 	$('.bottom-bar').html(`Version: ${module.exports.version}`);
 });
 
-const el = document.getElementById('videoFiles');
+const el = document.querySelector('#videoFiles');
 Sortable.create(el, {
 	onEnd(evt) {
 		switchGridPosition(evt.oldIndex, evt.newIndex);
@@ -83,6 +85,7 @@ async function switchGridPosition(from, to) {
 			await mainProcess.parseConfigRenderer('set', 'main', configData);
 		}
 	}
+
 	// Re number the list
 	let i = 1;
 	$('#videoFiles li').each(function () {
@@ -94,15 +97,18 @@ function arrayMove(array, oldIndex, newIndex) {
 	while (oldIndex < 0) {
 		oldIndex += array.length;
 	}
+
 	while (newIndex < 0) {
 		newIndex += array.length;
 	}
+
 	if (newIndex >= array.length) {
 		let k = newIndex - array.length;
 		while ((k--) + 1) {
 			array.push(undefined);
 		}
 	}
+
 	array.splice(newIndex, 0, array.splice(oldIndex, 1)[0]);
 	return array;
 }

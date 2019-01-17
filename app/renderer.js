@@ -23,6 +23,7 @@ $(document).ready(async () => {
 	} else {
 		totalVideos = 30;
 	}
+
 	const menuItems = await mainProcess.menuItems()
 		.catch(error => {
 			console.error(error);
@@ -30,6 +31,7 @@ $(document).ready(async () => {
 	for (let i = 0; i < menuItems.length; i++) {
 		$('#menu_smartphone ul').append(`<li id="menu_${menuItems[i].id}"><span class="glyphicon glyphicon-${menuItems[i].glyphicon}"></span>&nbsp;${menuItems[i].name}</li>`);
 	}
+
 	require('./menu'); // eslint-disable-line  import/no-unassigned-import
 
 	let selectHTML = '';
@@ -40,6 +42,7 @@ $(document).ready(async () => {
 			selectHTML += `<option>${i}</option>`;
 		}
 	}
+
 	$('#navbar_page select').html(selectHTML);
 
 	$('#attract_screen').click(function () {
@@ -51,6 +54,7 @@ $(document).ready(async () => {
 		if ($('#attract_screen_img').attr('src').indexOf('media\\blank') >= 0) {
 			return;
 		}
+
 		if ($(this).attr('class').indexOf('highlight-color') >= 0) {
 			mainProcess.unsetDefaultVideo($('#attract_screen').data('gridnum') - 1);
 		} else {
@@ -124,7 +128,7 @@ $('#details').click(() => {
 });
 
 ipcRenderer.on('thumbnailImage', (event, data) => {
-	document.getElementById('attract_screen_img').src = `${data[0]}?${new Date().getTime()}`;
+	document.querySelector('#attract_screen_img').src = `${data[0]}?${new Date().getTime()}`;
 });
 
 ipcRenderer.on('defaultVideo', (event, data) => {
@@ -161,6 +165,7 @@ ipcRenderer.on('gridDetails', (event, data) => {
 	} else {
 		$('#details').html();
 	}
+
 	if (data[5] !== undefined && data[5] !== null) {
 		$('.range-slider__value').html(data[5]);
 		$('.range-slider__range').val(data[5]);
@@ -175,6 +180,7 @@ ipcRenderer.on('render', (event, data) => {
 		$('.block-overlay').remove();
 		return;
 	}
+
 	switch (data[0]) {
 		case 'start':
 			oldContents = $('.bottom-bar').html(); // eslint-disable-line no-undef
@@ -206,6 +212,7 @@ function navbarPrevPage() {
 	if (prevGrid < 1) {
 		prevGrid = totalVideos;
 	}
+
 	$('#attract_screen').data('gridnum', prevGrid);
 	mainProcess.changeGrid(prevGrid - 1)
 		.catch(error => {
@@ -226,6 +233,7 @@ function navbarNextPage() {
 	if (nextGrid > totalVideos) {
 		nextGrid = 1;
 	}
+
 	$('#attract_screen').data('gridnum', nextGrid);
 	mainProcess.changeGrid(nextGrid - 1)
 		.catch(error => {
