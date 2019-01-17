@@ -20,6 +20,7 @@ $(document).ready(async () => {
 	for (let i = 0; i < menuItems.length; i++) {
 		$('#menu_smartphone ul').append(`<li id="menu_${menuItems[i].id}"><span class="glyphicon glyphicon-${menuItems[i].glyphicon}"></span>&nbsp;${menuItems[i].name}</li>`);
 	}
+
 	require('../menu'); // eslint-disable-line  import/no-unassigned-import
 	const availableEncoders = await mainProcess.availableEncoders()
 		.catch(error => {
@@ -32,10 +33,12 @@ $(document).ready(async () => {
 			if (i === '0') {
 				selected = ' selected';
 			}
+
 			encodersHTML += `<option value="${availableEncoders[i].id}"${selected}>${availableEncoders[i].name}</option>`;
 			selected = '';
 		}
 	}
+
 	$('#config-encoder').html(encodersHTML);
 	const configData = await mainProcess.parseConfigRenderer('get', 'main', false)
 		.catch(error => {
@@ -45,21 +48,27 @@ $(document).ready(async () => {
 	if (configData.renderScale !== undefined) {
 		$('#config-renderScale').val(configData.renderScale);
 	}
+
 	if (configData.encoder !== undefined) {
 		$('#config-encoder').val(configData.encoder);
 	}
+
 	if (configData.hwaccel === true) {
 		$('#config-hwaccel').prop('checked', true);
 	}
+
 	if (configData.muteAudio === true) {
 		$('#config-muteAudio').prop('checked', true);
 	}
+
 	if (configData.generateReport === true) {
 		$('#config-generateReport').prop('checked', true);
 	}
+
 	if (configData.extraCabinets === true) {
 		$('#config-extraCabinets').prop('checked', true);
 	}
+
 	if (configData.maxDuration !== undefined) {
 		if (configData.maxDuration === false) {
 			$('#config-maxDuration').val(null);
@@ -75,6 +84,7 @@ $(document).ready(async () => {
 	} else {
 		$('#label-attractScreenPath').html('Attract Screen Video - Set');
 	}
+
 	$('#config-attractScreenPath').off('click').on('click', () => {
 		mainProcess.selectAttractScreenFile();
 	});
@@ -85,6 +95,7 @@ $(document).ready(async () => {
 			const gcd = function (a, b) {
 				return (!b) ? a : gcd(b, a % b); // eslint-disable-line no-negated-condition
 			};
+
 			const videoGCD = gcd(split[0], split[1]);
 			// Divide width and height by GCD to validate aspect ratio
 			if (split[0] / videoGCD === 4 && split[1] / videoGCD === 3) {

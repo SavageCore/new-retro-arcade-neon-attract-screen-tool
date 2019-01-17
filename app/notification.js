@@ -31,6 +31,7 @@ ipcRenderer.on('notificationMsg', (event, data) => {
 		if (data.sticky !== undefined) {
 			window.clearTimeout(timeoutID);
 		}
+
 		if (data.log !== undefined) {
 			const LogWriter = require('log-writer');
 
@@ -55,6 +56,7 @@ ipcRenderer.on('notificationMsg', (event, data) => {
 						if ($('#attract_screen_img').attr('src').indexOf('media\\blank') >= 0) {
 							return;
 						}
+
 						if ($(this).attr('class').indexOf('highlight-color') >= 0) {
 							mainProcess.unsetDefaultVideo($('#attract_screen').data('gridnum') - 1);
 						} else {
@@ -85,12 +87,14 @@ function returnBottomBarState(oldContents, data) {
 	if (typeof data !== 'undefined') {
 		$('.bottom-bar').removeClass(`bottom-bar-${data.type}`);
 	}
+
 	$('.bottom-bar').html(oldContents);
 	$('#attract_screen_default').click(function () {
 		// If video not assigned to grid return
 		if ($('#attract_screen_img').attr('src').indexOf('media\\blank') >= 0) {
 			return;
 		}
+
 		if ($(this).attr('class').indexOf('highlight-color') >= 0) {
 			mainProcess.unsetDefaultVideo($('#attract_screen').data('gridnum') - 1);
 		} else {

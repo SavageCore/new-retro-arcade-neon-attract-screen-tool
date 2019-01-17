@@ -9,7 +9,7 @@ window.$ = window.jQuery = require('jquery'); // eslint-disable-line no-multi-as
 
 $(document).ready(() => {
 // Keyboard controls for video
-	const video = $('#videoPlayer')[0]; // eslint-disable-line prefer-destructuring
+	const video = $('#videoPlayer')[0];
 	$(window).keydown(event => {
 		switch (event.key) {
 			case ' ':
