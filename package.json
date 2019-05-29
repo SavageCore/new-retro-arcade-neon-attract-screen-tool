@@ -53,7 +53,7 @@
     "semver": "^6.1.1",
     "sortablejs": "^1.9.0",
     "speedometer": "^1.1.0",
-    "sumchecker": "^2.0.2",
+    "sumchecker": "^3.0.0",
     "throttleit": "^1.0.0",
     "winreg": "^1.2.4",
     "xml-objects": "^1.0.1",
