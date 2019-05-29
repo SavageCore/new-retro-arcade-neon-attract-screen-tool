@@ -44,7 +44,7 @@
     "log-writer": "0.0.9",
     "make-dir": "^2.1.0",
     "moment": "^2.24.0",
-    "object-keys": "^1.1.0",
+    "object-keys": "^1.1.1",
     "pkginfo": "^0.4.1",
     "pretty-bytes": "^5.2.0",
     "pretty-filename": "^0.1.0",
