@@ -50,7 +50,7 @@
     "pretty-filename": "^0.1.0",
     "progress-stream": "^2.0.0",
     "request": "^2.88.0",
-    "semver": "^6.2.0",
+    "semver": "^7.1.1",
     "sortablejs": "^1.9.0",
     "speedometer": "^1.1.0",
     "sumchecker": "^3.0.0",
