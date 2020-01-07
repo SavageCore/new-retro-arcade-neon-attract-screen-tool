@@ -35,7 +35,7 @@
     "config-ini-parser": "^1.2.2",
     "electron-download": "^4.1.1",
     "electron-json-storage": "^4.1.6",
-    "electron-unhandled": "^2.2.0",
+    "electron-unhandled": "^3.0.2",
     "eol": "^0.9.1",
     "fs-extra": "^8.1.0",
     "jquery": "^3.4.1",
