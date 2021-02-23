@@ -34,7 +34,7 @@
     "@ffprobe-installer/ffprobe": "^1.0.12",
     "config-ini-parser": "^1.2.2",
     "electron-download": "^4.1.1",
-    "electron-json-storage": "^4.1.6",
+    "electron-json-storage": "^4.4.0",
     "electron-unhandled": "^2.2.0",
     "eol": "^0.9.1",
     "fs-extra": "^8.1.0",
