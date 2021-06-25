@@ -1,0 +1,26 @@
+version: 2
+updates:
+- package-ecosystem: npm
+  directory: "/"
+  schedule:
+    interval: daily
+  open-pull-requests-limit: 10
+  ignore:
+  - dependency-name: xo
+    versions:
+    - 0.37.1
+    - 0.38.1
+    - 0.38.2
+  - dependency-name: electron-json-storage
+    versions:
+    - 4.3.0
+    - 4.4.0
+  - dependency-name: pretty-bytes
+    versions:
+    - 5.5.0
+  - dependency-name: semver
+    versions:
+    - 7.3.4
+  - dependency-name: lodash
+    versions:
+    - 4.17.20
