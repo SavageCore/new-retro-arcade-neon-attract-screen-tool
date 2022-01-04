@@ -58,7 +58,7 @@
     "winreg": "^1.2.4",
     "xml-objects": "^1.0.1",
     "xml-writer": "^1.7.0",
-    "xmlfmt": "^1.0.0",
+    "xmlfmt": "^2.0.0",
     "yauzl": "^2.10.0"
   },
   "xo": {
